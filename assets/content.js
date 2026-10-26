@@ -72,16 +72,6 @@
           ["Leave empty cells empty", "An empty cell means no reading. Treating it as zero makes averages look cleaner than the air was."],
         ],
       },
-      {
-        id: "publish", title: "Publish a cohort", audience: "ROCIS team",
-        intro: "Everything between these steps runs on its own. A person is needed three times per cohort.",
-        steps: [
-          ["Set up the cohort", "Add the start date to the cohort list and each site's ID and neighborhood to the cohort sheet. New sites get a hash ID automatically."],
-          ["Send the upload link", "Volunteers upload their monitor files through it. They don't need an account."],
-          ["Approve the release", "When new files arrive, you get a summary of what changed and any problems. Approve it and the site, the hash ID report and the Excel summary update."],
-        ],
-        outro: "If a check fails, the summary names the file and what to fix. Nothing is published until it's fixed.",
-      },
     ],
   };
 
