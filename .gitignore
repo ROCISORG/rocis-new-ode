@@ -1,0 +1,6 @@
+# Private data lives in ../rocis-outdoor-explorer-private; these catch stray copies
+sites.csv
+output/
+pipeline/private/
+__pycache__/
+*.xlsx

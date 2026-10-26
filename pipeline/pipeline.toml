@@ -1,0 +1,16 @@
+# Where the pipeline reads from and writes to. Paths are relative to this folder.
+# `registry` and `output` hold private data (site IDs), so they live outside this repository.
+[paths]
+published_data = "../../rocis.github.io/Data"
+site_data = "../data"
+output = "../../rocis-outdoor-explorer-private/output"
+registry = "../../rocis-outdoor-explorer-private/sites.csv"
+neighborhood_directory = "../../rocis.github.io/neighborhood_codes_directory.html"
+old_explorer = "../../rocis.github.io/explorer.html"
+
+# Cohorts built from raw monitor downloads instead of a published CSV.
+# Readings at or before `start` (and at or after `end`, if set) are left out.
+[[raw_cohorts]]
+cohort = 70
+raw = "../../rocis.github.io/cohort 70 raw outdoor data"
+start = "2026-10-01 00:00:00"
