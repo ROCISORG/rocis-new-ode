@@ -40,6 +40,14 @@ def _round(value):
     return None if value is None else round(value, 1)
 
 
+def state_of(code: str, place: dict) -> str:
+    """Columns outside Pennsylvania end in a state code (MEBA_ME); the rest are in Pennsylvania."""
+    parts = code.split("_")
+    if len(parts) > 1 and len(parts[-1]) == 2:
+        return parts[-1]
+    return place.get("state") or "PA"
+
+
 def write_site_cohort(cohort: Cohort, meta: dict, neighborhoods: dict, folder: Path) -> dict:
     """Write data/cohort-N.js on a regular 15-minute grid and return its manifest entry."""
     first, last = cohort.span()
@@ -54,6 +62,7 @@ def write_site_cohort(cohort: Cohort, meta: dict, neighborhoods: dict, folder: P
             "code": m.code,
             "name": (place.get("name") or m.code).split(" / ")[0],
             "county": place.get("county", ""),
+            "state": state_of(m.code, place),
             "total": [_round(m.total.get(s)) for s in grid],
             "large": [_round(m.large.get(s)) for s in grid],
         })
@@ -81,13 +90,16 @@ def write_site_cohort(cohort: Cohort, meta: dict, neighborhoods: dict, folder: P
         "source": cohort.source,
         "file": path.name,
         "kb": round(len(text) / 1024),
+        "codes": sorted({m.code.split("_")[0] for m in cohort.monitors}),
+        "hashIds": sorted({m.hash_id for m in cohort.monitors}),
     }
 
 
 def write_manifest(entries: list, neighborhoods: dict, folder: Path) -> Path:
     entries = sorted(entries, key=lambda e: e["cohort"])
     payload = {"generated": datetime.now().strftime("%Y-%m-%d %H:%M"), "cohorts": entries,
-               "neighborhoods": {c: {"name": n["name"], "county": n["county"]} for c, n in neighborhoods.items()}}
+               "neighborhoods": {c: {"name": n["name"], "county": n["county"], "state": n.get("state", "")}
+                                 for c, n in neighborhoods.items()}}
     path = folder / "cohorts.js"
     path.write_text("ROCIS.manifest(" + json.dumps(payload, separators=(",", ":")) + ");\n", encoding="utf-8")
     return path

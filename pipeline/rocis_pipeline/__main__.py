@@ -32,9 +32,12 @@ def init_config(settings) -> None:
         if code in seen:
             continue
         seen.add(code)
-        county = m.group(5) or ("Allegheny County" if region.startswith("Allegheny") else region)
-        rows.append({"code": code, "name": html.unescape(m.group(3)).strip(), "county": html.unescape(county).strip()})
-    write_rows(PIPELINE_DIR / "config" / "neighborhoods.csv", ["code", "name", "county"], rows)
+        place = html.unescape(m.group(5) or ("Allegheny County" if region.startswith("Allegheny") else region)).strip()
+        # Locations are a county ("Beaver County", "Cambria County, PA") or a state code ("ME")
+        county = place.removesuffix(", PA") if "County" in place else ""
+        state = "PA" if county or place == "PA" else place
+        rows.append({"code": code, "name": html.unescape(m.group(3)).strip(), "county": county, "state": state})
+    write_rows(PIPELINE_DIR / "config" / "neighborhoods.csv", ["code", "name", "county", "state"], rows)
 
     explorer = settings.old_explorer.read_text(encoding="utf-8")
     block = re.search(r"const cohortDates = \{(.*?)\};", explorer, re.S).group(1)

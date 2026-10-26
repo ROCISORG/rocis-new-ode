@@ -76,7 +76,7 @@ def load_cohorts() -> dict:
 
 
 def load_neighborhoods() -> dict:
-    """Neighborhood code -> {"name", "county"} from config/neighborhoods.csv."""
+    """Neighborhood code -> {"name", "county", "state"} from config/neighborhoods.csv."""
     return {r["code"]: r for r in read_rows(PIPELINE_DIR / "config" / "neighborhoods.csv")}
 
 

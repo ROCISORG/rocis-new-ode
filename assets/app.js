@@ -5,10 +5,14 @@
   const U = ROCIS.util;
 
   ROCIS.createApp = function createApp(cfg) {
-    const state = { cohort: null, measure: "total", monitor: 0, range: "all", scale: "value" };
+    const state = { cohort: null, measure: "total", monitor: 0, range: "all", scale: "value", region: "all" };
     const charts = {};
-    let c = null, an = null, renderToken = 0;
-    const app = { state, get cohort() { return c; }, get analysis() { return an; }, charts, select, setCohort, rerender: render };
+    // full: the cohort as loaded; c: what is shown (only Pennsylvania monitors when region is "pa")
+    let full = null, c = null, an = null, renderToken = 0, hidden = 0;
+    const app = {
+      state, get cohort() { return c; }, get analysis() { return an; }, get hidden() { return hidden; },
+      charts, select, setCohort, show, rerender: render,
+    };
 
     function chartFor(key) {
       const el = cfg.els[key];
@@ -71,7 +75,47 @@
       render();
     }
 
-    async function setCohort(n) {
+    const isPA = (m) => (m.state || "PA") === "PA";
+
+    function viewOf(cohort) {
+      if (state.region !== "pa") return cohort;
+      const kept = cohort.monitors.filter(isPA);
+      // a cohort with no Pennsylvania monitors is shown whole rather than empty
+      if (!kept.length || kept.length === cohort.monitors.length) return cohort;
+      return { ...cohort, monitors: kept.map((m, i) => ({ ...m, idx: i })) };
+    }
+
+    function applyView(prefer) {
+      const previousHash = c && c.monitors[state.monitor] ? c.monitors[state.monitor].hashId : null;
+      c = viewOf(full);
+      hidden = full.monitors.length - c.monitors.length;
+      const [i0, i1] = U.windowIdx(c, state.range);
+      const first = U.analyze(c, state.measure, i0, i1);
+      const wanted = (prefer && c.monitors.find(prefer)) || (previousHash && c.monitors.find((m) => m.hashId === previousHash));
+      const mostData = first.stats.reduce((best, s) => (s.n > best.n ? s : best), first.stats[0]);
+      state.monitor = wanted ? wanted.idx : mostData.m.idx;
+      fillMonitorSelect();
+      render();
+    }
+
+    function setRegion(region) {
+      state.region = region;
+      (cfg.controls.region || []).forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.region === region)));
+    }
+
+    // open cohort n with the monitor for a neighborhood code highlighted
+    function show(n, code) {
+      const base = (m) => m.code.split("_")[0] === code;
+      if (cfg.controls.cohort) cfg.controls.cohort.value = String(n);
+      if (n === state.cohort && full) {
+        const target = full.monitors.find(base);
+        if (target && !isPA(target)) setRegion("all");
+        return applyView(base);
+      }
+      return setCohort(n, base, true);
+    }
+
+    async function setCohort(n, prefer, allowOutside) {
       const token = ++renderToken;
       Object.values(charts).forEach((ch) => ch.showLoading && ch.showLoading("default", { text: "", color: ROCIS.charts.theme().emph, maskColor: "rgba(0,0,0,0)" }));
       let loaded;
@@ -83,17 +127,12 @@
         return;
       }
       if (token !== renderToken) return;
-      const previousHash = c && c.monitors[state.monitor] ? c.monitors[state.monitor].hashId : null;
-      c = loaded;
+      full = loaded;
       state.cohort = n;
-      const [i0, i1] = U.windowIdx(c, state.range);
-      const first = U.analyze(c, state.measure, i0, i1);
-      const same = previousHash && c.monitors.find((m) => m.hashId === previousHash);
-      const mostData = first.stats.reduce((best, s) => (s.n > best.n ? s : best), first.stats[0]);
-      state.monitor = same ? same.idx : mostData.m.idx;
-      fillMonitorSelect();
+      const target = prefer && full.monitors.find(prefer);
+      if (allowOutside && target && !isPA(target)) setRegion("all");
       Object.values(charts).forEach((ch) => ch.hideLoading());
-      render();
+      applyView(prefer);
     }
 
     function fillMonitorSelect() {
@@ -134,6 +173,10 @@
     wireButtons(cfg.controls.measure, "measure");
     wireButtons(cfg.controls.range, "range");
     wireButtons(cfg.controls.scale, "scale");
+    (cfg.controls.region || []).forEach((b) => b.addEventListener("click", () => {
+      setRegion(b.dataset.region);
+      if (full) applyView();
+    }));
 
     const watchTheme = () => { if (c) render(); };
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", watchTheme);

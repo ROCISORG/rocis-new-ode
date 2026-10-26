@@ -1,239 +1,239 @@
-code,name,county
-ALGW,Allegheny West,Allegheny County
-ALPK,Allison Park / Shaler Township,Allegheny County
-ALTN,Allentown,Allegheny County
-LNPL,Lincoln Place,Allegheny County
-APHL,Apple Hill,Allegheny County
-MTNO,Mt. Nebo,Allegheny County
-ASPW,Aspinwall,Allegheny County
-AVLN,Avalon,Allegheny County
-AVNW,Avonworth,Allegheny County
-BADN,Baden,Allegheny County
-BAHT,Ben Avon Heights,Allegheny County
-BATP,Baldwin Township,Allegheny County
-BAVN,Ben Avon,Allegheny County
-BCVW,Beechview,Allegheny County
-BEHL,"Beacon Hill, Wilkinsburg",Allegheny County
-BELL,Bellevue,Allegheny County
-BGTN,Broughton,Allegheny County
-BKRG,Brackenridge,Allegheny County
-BKTN,Bakerstown,Allegheny County
-BLKR,Blackridge,Allegheny County
-BLOO,Bloomfield,Allegheny County
-BLPK,Bethel Park,Allegheny County
-BNAR,Bon Air,Allegheny County
-BRAD,Braddock,Allegheny County
-BREN,Brentwood,Allegheny County
-BRFD,Bradford,Allegheny County
-BRHL,Braddock Hills,Allegheny County
-BRHT,Brighton Heights,Allegheny County
-BRKN,Brookline,Allegheny County
-CARN,Carnegie,Allegheny County
-CFT,Crafton,Allegheny County
-CHAL,Chalfont,Allegheny County
-CHAR,Chartiers / Windgap,Allegheny County
-CHWK,Cheswick,Allegheny County
-CLRN,Clairton,Allegheny County
-CPLS,Coraopolis,Allegheny County
-CRAN,Cranberry Township,Allegheny County
-CRCK,Carrick,Allegheny County
-CRFT,Crafton,Allegheny County
-CRHT,Crafton Heights,Allegheny County
-DORM,Dormont,Allegheny County
-DOWN,Downtown,Allegheny County
-DQTN,Downtown,Allegheny County
-DRRY,Derry,Allegheny County
-DSVL,Dorseyville,Allegheny County
-DUQH,Duquesne Heights,Allegheny County
-DUQS,Duquesne,Allegheny County
-EDTW,East Deuschtown Spring Garden,Allegheny County
-EDWD,Edgewood,Allegheny County
-ELIB,East Liberty / East Liberty-Larimer,Allegheny County
-ELIZ,Elizabeth,Allegheny County
-ELOT,Elliott,Allegheny County
-EMFD,Emerald Fields,Allegheny County
-EMSW,Emsworth,Allegheny County
-ETNA,Etna / Borough of Etna,Allegheny County
-FDCY,Ford City,Allegheny County
-FKPK,Franklin Park,Allegheny County
-FRHL,Forest Hills,Allegheny County
-FRPT,Freeport,Allegheny County
-FRSP,Friendship,Allegheny County
-FXCP,Fox Chapel / Indiana Township,Allegheny County
-FYWD,Fairywood,Allegheny County
-GARF,Garfield,Allegheny County
-GIBS,Gibsonia / Hampton Township,Allegheny County
-GLEN,Glenview,Allegheny County
-GLSW,Glenshaw,Allegheny County
-GNFD,Greenfield,Allegheny County
-GRFD,Greenfield,Allegheny County
-GRTR,Green Tree,Allegheny County
-HILL,Hill District / Crawford Square,Allegheny County
-HIPK,Highland Park,Allegheny County
-HMSD,Homestead,Allegheny County
-HMWD,Homewood / Homewood-Brushton,Allegheny County
-HZWD,Hazelwood,Allegheny County
-INGM,Ingram,Allegheny County
-LARM,Larimer,Allegheny County
-LEET,Leetsdale (Sewickley),Allegheny County
-LWCV,Lawrenceville / Lower Lawrenceville,Allegheny County
-MCCA,McCandless / McCandless Township,Allegheny County
-MCKP,McKeesport,Allegheny County
-MCRK,McKees Rocks,Allegheny County
-MILL,Millvale,Allegheny County
-MNCH,Manchester,Allegheny County
-MOON,Moon Township,Allegheny County
-MRSD,Morningside,Allegheny County
-MRTP,Marshall Township,Allegheny County
-MTLE,Mount Lebanon / Mt Lebanon,Allegheny County
-MTOV,Mt. Oliver,Allegheny County
-MUNH,Munhall,Allegheny County
-MWSH,Mt. Washington,Allegheny County
-N0SD,Northside / Allegheny West,Allegheny County
-NBRD,North Braddock,Allegheny County
-NHLL,North Hills / Marshall Township,Allegheny County
-NOSD,North Side / Mexican War Streets,Allegheny County
-NSEW,North Sewickley Township,Allegheny County
-NSHR,North Shore,Allegheny County
-NVLL,Neville Island,Allegheny County
-OAK,Oakland CMU,Allegheny County
-OAKD,Oakwood,Allegheny County
-OAKL,Oakland Pitt,Allegheny County
-OAMT,Oakmont,Allegheny County
-OH,Observatory Hill,Allegheny County
-OHRA,O'Hara / O'Hara Township,Allegheny County
-OITP,Ohio Township,Allegheny County
-OKDL,Oakdale,Allegheny County
-PHLL,Polish Hill,Allegheny County
-PLHL,Pleasant Hills,Allegheny County
-PLUM,Plum Borough,Allegheny County
-PNHL,Penn Hills,Allegheny County
-PTBR,Point Breeze,Allegheny County
-PTBZ,Point Breeze,Allegheny County
-RBN,Robinson / Robinson Township,Allegheny County
-RGSQ,Regent Square,Allegheny County
-ROSS,Ross / Ross Township,Allegheny County
-SCTP,Scott Township,Allegheny County
-SEWY,Sewickley / Sewickley-Ohio Twp,Allegheny County
-SHAD,Shadyside,Allegheny County
-SHADY,Shadyside,Allegheny County
-SHDN,Sheraden,Allegheny County
-SHGT,South Heights,Allegheny County
-SHLR,Shaler,Allegheny County
-SHRP,Sharpsburg,Allegheny County
-SOAK,South Oakland,Allegheny County
-SOHL,South Hills,Allegheny County
-SOSD,South Side,Allegheny County
-SOSF,South Side Flats,Allegheny County
-SPHL,Spring Hill,Allegheny County
-SPKT,South Park Township,Allegheny County
-SQHL,Squirrel Hill,Allegheny County
-SQHN,Squirrel Hill North,Allegheny County
-SQHS,Squirrel Hill South,Allegheny County
-SRRY,Surrey Place - Indiana Township,Allegheny County
-STDT,Strip District,Allegheny County
-STHT,Stanton Heights,Allegheny County
-STRIP,Strip District,Allegheny County
-SWPK,Swisshelm Park,Allegheny County
-SWVL,Swissvale,Allegheny County
-TRAF,Trafford,Allegheny County
-TROY,Troy Hill,Allegheny County
-TRTM,Tarentum Borough,Allegheny County
-UPTN,Uptown,Allegheny County
-USCL,Upper St Clair,Allegheny County
-VLVW,Valleyview,Allegheny County
-WDER,West Deer Township,Allegheny County
-WEND,West End,Allegheny County
-WEX,Wexford,Allegheny County
-WFDH,Wallingford Heights,Allegheny County
-WHLL,Borough of Whitehall,Allegheny County
-WKT,Wilkins Township,Allegheny County
-WLIB,West Elizabeth,Allegheny County
-WLKG,Wilkinsburg,Allegheny County
-WMIF,West Mifflin,Allegheny County
-WOAK,West Oakland,Allegheny County
-BEVR,Beaver,Beaver County
-AMBR,Ambridge,Beaver County
-ALTO,Altoona,Blair County
-BVFL,Beaver Falls,Beaver County
-BVTP,Beaver Township,Beaver County
-CLTN,Clinton,Beaver County
-ECON,Economy,Beaver County
-HMTP,Harmony Township,Beaver County
-INDY,Industry,Beaver County
-MARS,Mars,Butler County
-SLRK,"Brady Twp, Slippery Rock",Butler County
-ZELI,Zelienople,Butler County
-STCG,State College,Centre County
-DUNC,Duncansville,Blair County
-NOEA,North East,Erie County
-GRBG,Greensburg,Fayette County
-CLVL,Clarksville,Greene County
-CRTP,Center Township,Greene County
-JEFF,Jefferson,Greene County
-MGTP,Morgan Township,Greene County
-WBG,Waynesburg,Greene County
-WYBG,Waynesburg,Greene County
-JNTN,Jennerstown,Somerset County
-WLCK,Wilson Creek,Somerset County
-GTBG,Gettysburg,Adams County
-BRGT,Burgettstown,Washington County
-BUFF,Buffalo Township,Washington County
-BULG,Bulger,Washington County
-DMBR,Deemston Boro,Washington County
-HICK,Hickory,Washington County
-MCMR,McMurray,Washington County
-MONG,Monongahela,Washington County
-NTHM,Nottingham,Washington County
-PETE,Peters Twp / Venetia,Washington County
-SCLL,Scenery Hill,Washington County
-WASH,Washington,Washington County
-IRWN,Irwin,Westmoreland County
-LGNR,Ligonier Borough,Westmoreland County
-MRVL,Murrysville,Westmoreland County
-NKEN,New Kensington,Westmoreland County
-NOHU,North Huntingdon,Westmoreland County
-FNVL,Finleyville,PA
-YORK,York,PA
-CAAL,Alameda,CA
-OHCO,Columbus,OH
-CABK,Berkeley,CA
-CAFF,Fairfax,CA
-CANC,Nevada City,CA
-CASJ,San Jose,CA
-CASM,San Mateo,CA
-DCCH,Capital Hill,DC
-IOCY,Iowa City,IO
-KSLW,Lawrence,KS
-KSOP,Overland Park,KS
-MEAG,Augusta,ME
-MEBA,Bath,ME
-MEKE,Kennebunk,ME
-MENA,Naples,ME
-MEPL,Poland,ME
-MERF,Readfield,ME
-MESD,Standish,ME
-MEWD,Windham,ME
-MAAR,Arlington,MA
-MAJP,Jamaica Plain,MA
-MANA,North Andover,MA
-MNDU,Duluth,MN
-MNMP,Minneapolis,MN
-MNNF,Northfield,MN
-NFMN,Northfield,MN
-MNSP,"Saint Paul, Payne-Phalen",MN
-NJHD,New Jersey,NJ
-CLE,Cleveland,OH
-OHAK,Akron,OH
-OHCU,Cuyahoga Falls,OH
-OHEP,East Palestine,OH
-ORCB,Canby,OR
-ORPO,"Concordia, NE Portland",OR
-TXWA,Waco,TX
-VAKT,Virginia,VA
-VARN,Roanoke,VA
-WABH,Bellingham,WA
-WAWS,White Salmon,WA
-WIJK,Cleveland Township,WI
-WIMD,Madison,WI
-JOHN,Johnstown,"Cambria County, PA"
+code,name,county,state
+ALGW,Allegheny West,Allegheny County,PA
+ALPK,Allison Park / Shaler Township,Allegheny County,PA
+ALTN,Allentown,Allegheny County,PA
+LNPL,Lincoln Place,Allegheny County,PA
+APHL,Apple Hill,Allegheny County,PA
+MTNO,Mt. Nebo,Allegheny County,PA
+ASPW,Aspinwall,Allegheny County,PA
+AVLN,Avalon,Allegheny County,PA
+AVNW,Avonworth,Allegheny County,PA
+BADN,Baden,Allegheny County,PA
+BAHT,Ben Avon Heights,Allegheny County,PA
+BATP,Baldwin Township,Allegheny County,PA
+BAVN,Ben Avon,Allegheny County,PA
+BCVW,Beechview,Allegheny County,PA
+BEHL,"Beacon Hill, Wilkinsburg",Allegheny County,PA
+BELL,Bellevue,Allegheny County,PA
+BGTN,Broughton,Allegheny County,PA
+BKRG,Brackenridge,Allegheny County,PA
+BKTN,Bakerstown,Allegheny County,PA
+BLKR,Blackridge,Allegheny County,PA
+BLOO,Bloomfield,Allegheny County,PA
+BLPK,Bethel Park,Allegheny County,PA
+BNAR,Bon Air,Allegheny County,PA
+BRAD,Braddock,Allegheny County,PA
+BREN,Brentwood,Allegheny County,PA
+BRFD,Bradford,Allegheny County,PA
+BRHL,Braddock Hills,Allegheny County,PA
+BRHT,Brighton Heights,Allegheny County,PA
+BRKN,Brookline,Allegheny County,PA
+CARN,Carnegie,Allegheny County,PA
+CFT,Crafton,Allegheny County,PA
+CHAL,Chalfont,Allegheny County,PA
+CHAR,Chartiers / Windgap,Allegheny County,PA
+CHWK,Cheswick,Allegheny County,PA
+CLRN,Clairton,Allegheny County,PA
+CPLS,Coraopolis,Allegheny County,PA
+CRAN,Cranberry Township,Allegheny County,PA
+CRCK,Carrick,Allegheny County,PA
+CRFT,Crafton,Allegheny County,PA
+CRHT,Crafton Heights,Allegheny County,PA
+DORM,Dormont,Allegheny County,PA
+DOWN,Downtown,Allegheny County,PA
+DQTN,Downtown,Allegheny County,PA
+DRRY,Derry,Allegheny County,PA
+DSVL,Dorseyville,Allegheny County,PA
+DUQH,Duquesne Heights,Allegheny County,PA
+DUQS,Duquesne,Allegheny County,PA
+EDTW,East Deuschtown Spring Garden,Allegheny County,PA
+EDWD,Edgewood,Allegheny County,PA
+ELIB,East Liberty / East Liberty-Larimer,Allegheny County,PA
+ELIZ,Elizabeth,Allegheny County,PA
+ELOT,Elliott,Allegheny County,PA
+EMFD,Emerald Fields,Allegheny County,PA
+EMSW,Emsworth,Allegheny County,PA
+ETNA,Etna / Borough of Etna,Allegheny County,PA
+FDCY,Ford City,Allegheny County,PA
+FKPK,Franklin Park,Allegheny County,PA
+FRHL,Forest Hills,Allegheny County,PA
+FRPT,Freeport,Allegheny County,PA
+FRSP,Friendship,Allegheny County,PA
+FXCP,Fox Chapel / Indiana Township,Allegheny County,PA
+FYWD,Fairywood,Allegheny County,PA
+GARF,Garfield,Allegheny County,PA
+GIBS,Gibsonia / Hampton Township,Allegheny County,PA
+GLEN,Glenview,Allegheny County,PA
+GLSW,Glenshaw,Allegheny County,PA
+GNFD,Greenfield,Allegheny County,PA
+GRFD,Greenfield,Allegheny County,PA
+GRTR,Green Tree,Allegheny County,PA
+HILL,Hill District / Crawford Square,Allegheny County,PA
+HIPK,Highland Park,Allegheny County,PA
+HMSD,Homestead,Allegheny County,PA
+HMWD,Homewood / Homewood-Brushton,Allegheny County,PA
+HZWD,Hazelwood,Allegheny County,PA
+INGM,Ingram,Allegheny County,PA
+LARM,Larimer,Allegheny County,PA
+LEET,Leetsdale (Sewickley),Allegheny County,PA
+LWCV,Lawrenceville / Lower Lawrenceville,Allegheny County,PA
+MCCA,McCandless / McCandless Township,Allegheny County,PA
+MCKP,McKeesport,Allegheny County,PA
+MCRK,McKees Rocks,Allegheny County,PA
+MILL,Millvale,Allegheny County,PA
+MNCH,Manchester,Allegheny County,PA
+MOON,Moon Township,Allegheny County,PA
+MRSD,Morningside,Allegheny County,PA
+MRTP,Marshall Township,Allegheny County,PA
+MTLE,Mount Lebanon / Mt Lebanon,Allegheny County,PA
+MTOV,Mt. Oliver,Allegheny County,PA
+MUNH,Munhall,Allegheny County,PA
+MWSH,Mt. Washington,Allegheny County,PA
+N0SD,Northside / Allegheny West,Allegheny County,PA
+NBRD,North Braddock,Allegheny County,PA
+NHLL,North Hills / Marshall Township,Allegheny County,PA
+NOSD,North Side / Mexican War Streets,Allegheny County,PA
+NSEW,North Sewickley Township,Allegheny County,PA
+NSHR,North Shore,Allegheny County,PA
+NVLL,Neville Island,Allegheny County,PA
+OAK,Oakland CMU,Allegheny County,PA
+OAKD,Oakwood,Allegheny County,PA
+OAKL,Oakland Pitt,Allegheny County,PA
+OAMT,Oakmont,Allegheny County,PA
+OH,Observatory Hill,Allegheny County,PA
+OHRA,O'Hara / O'Hara Township,Allegheny County,PA
+OITP,Ohio Township,Allegheny County,PA
+OKDL,Oakdale,Allegheny County,PA
+PHLL,Polish Hill,Allegheny County,PA
+PLHL,Pleasant Hills,Allegheny County,PA
+PLUM,Plum Borough,Allegheny County,PA
+PNHL,Penn Hills,Allegheny County,PA
+PTBR,Point Breeze,Allegheny County,PA
+PTBZ,Point Breeze,Allegheny County,PA
+RBN,Robinson / Robinson Township,Allegheny County,PA
+RGSQ,Regent Square,Allegheny County,PA
+ROSS,Ross / Ross Township,Allegheny County,PA
+SCTP,Scott Township,Allegheny County,PA
+SEWY,Sewickley / Sewickley-Ohio Twp,Allegheny County,PA
+SHAD,Shadyside,Allegheny County,PA
+SHADY,Shadyside,Allegheny County,PA
+SHDN,Sheraden,Allegheny County,PA
+SHGT,South Heights,Allegheny County,PA
+SHLR,Shaler,Allegheny County,PA
+SHRP,Sharpsburg,Allegheny County,PA
+SOAK,South Oakland,Allegheny County,PA
+SOHL,South Hills,Allegheny County,PA
+SOSD,South Side,Allegheny County,PA
+SOSF,South Side Flats,Allegheny County,PA
+SPHL,Spring Hill,Allegheny County,PA
+SPKT,South Park Township,Allegheny County,PA
+SQHL,Squirrel Hill,Allegheny County,PA
+SQHN,Squirrel Hill North,Allegheny County,PA
+SQHS,Squirrel Hill South,Allegheny County,PA
+SRRY,Surrey Place - Indiana Township,Allegheny County,PA
+STDT,Strip District,Allegheny County,PA
+STHT,Stanton Heights,Allegheny County,PA
+STRIP,Strip District,Allegheny County,PA
+SWPK,Swisshelm Park,Allegheny County,PA
+SWVL,Swissvale,Allegheny County,PA
+TRAF,Trafford,Allegheny County,PA
+TROY,Troy Hill,Allegheny County,PA
+TRTM,Tarentum Borough,Allegheny County,PA
+UPTN,Uptown,Allegheny County,PA
+USCL,Upper St Clair,Allegheny County,PA
+VLVW,Valleyview,Allegheny County,PA
+WDER,West Deer Township,Allegheny County,PA
+WEND,West End,Allegheny County,PA
+WEX,Wexford,Allegheny County,PA
+WFDH,Wallingford Heights,Allegheny County,PA
+WHLL,Borough of Whitehall,Allegheny County,PA
+WKT,Wilkins Township,Allegheny County,PA
+WLIB,West Elizabeth,Allegheny County,PA
+WLKG,Wilkinsburg,Allegheny County,PA
+WMIF,West Mifflin,Allegheny County,PA
+WOAK,West Oakland,Allegheny County,PA
+BEVR,Beaver,Beaver County,PA
+AMBR,Ambridge,Beaver County,PA
+ALTO,Altoona,Blair County,PA
+BVFL,Beaver Falls,Beaver County,PA
+BVTP,Beaver Township,Beaver County,PA
+CLTN,Clinton,Beaver County,PA
+ECON,Economy,Beaver County,PA
+HMTP,Harmony Township,Beaver County,PA
+INDY,Industry,Beaver County,PA
+MARS,Mars,Butler County,PA
+SLRK,"Brady Twp, Slippery Rock",Butler County,PA
+ZELI,Zelienople,Butler County,PA
+STCG,State College,Centre County,PA
+DUNC,Duncansville,Blair County,PA
+NOEA,North East,Erie County,PA
+GRBG,Greensburg,Fayette County,PA
+CLVL,Clarksville,Greene County,PA
+CRTP,Center Township,Greene County,PA
+JEFF,Jefferson,Greene County,PA
+MGTP,Morgan Township,Greene County,PA
+WBG,Waynesburg,Greene County,PA
+WYBG,Waynesburg,Greene County,PA
+JNTN,Jennerstown,Somerset County,PA
+WLCK,Wilson Creek,Somerset County,PA
+GTBG,Gettysburg,Adams County,PA
+BRGT,Burgettstown,Washington County,PA
+BUFF,Buffalo Township,Washington County,PA
+BULG,Bulger,Washington County,PA
+DMBR,Deemston Boro,Washington County,PA
+HICK,Hickory,Washington County,PA
+MCMR,McMurray,Washington County,PA
+MONG,Monongahela,Washington County,PA
+NTHM,Nottingham,Washington County,PA
+PETE,Peters Twp / Venetia,Washington County,PA
+SCLL,Scenery Hill,Washington County,PA
+WASH,Washington,Washington County,PA
+IRWN,Irwin,Westmoreland County,PA
+LGNR,Ligonier Borough,Westmoreland County,PA
+MRVL,Murrysville,Westmoreland County,PA
+NKEN,New Kensington,Westmoreland County,PA
+NOHU,North Huntingdon,Westmoreland County,PA
+FNVL,Finleyville,Washington County,PA
+YORK,York,York County,PA
+CAAL,Alameda,,CA
+OHCO,Columbus,,OH
+CABK,Berkeley,,CA
+CAFF,Fairfax,,CA
+CANC,Nevada City,,CA
+CASJ,San Jose,,CA
+CASM,San Mateo,,CA
+DCCH,Capital Hill,,DC
+IOCY,Iowa City,,IA
+KSLW,Lawrence,,KS
+KSOP,Overland Park,,KS
+MEAG,Augusta,,ME
+MEBA,Bath,,ME
+MEKE,Kennebunk,,ME
+MENA,Naples,,ME
+MEPL,Poland,,ME
+MERF,Readfield,,ME
+MESD,Standish,,ME
+MEWD,Windham,,ME
+MAAR,Arlington,,MA
+MAJP,Jamaica Plain,,MA
+MANA,North Andover,,MA
+MNDU,Duluth,,MN
+MNMP,Minneapolis,,MN
+MNNF,Northfield,,MN
+NFMN,Northfield,,MN
+MNSP,"Saint Paul, Payne-Phalen",,MN
+NJHD,New Jersey,,NJ
+CLE,Cleveland,,OH
+OHAK,Akron,,OH
+OHCU,Cuyahoga Falls,,OH
+OHEP,East Palestine,,OH
+ORCB,Canby,,OR
+ORPO,"Concordia, NE Portland",,OR
+TXWA,Waco,,TX
+VAKT,Virginia,,VA
+VARN,Roanoke,,VA
+WABH,Bellingham,,WA
+WAWS,White Salmon,,WA
+WIJK,Cleveland Township,,WI
+WIMD,Madison,,WI
+JOHN,Johnstown,Cambria County,PA

@@ -50,14 +50,14 @@
   const axisStyle = (t) => ({
     axisLine: { lineStyle: { color: t.rule } },
     axisTick: { show: false },
-    axisLabel: { color: t.muted, fontSize: 11, hideOverlap: true },
+    axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true },
     splitLine: { lineStyle: { color: t.rule } },
   });
   const valueAxis = (t, scale, extra = {}) => ({
     type: scale === "log" ? "log" : "value",
     min: scale === "log" ? 1 : 0,
     ...axisStyle(t),
-    axisLabel: { color: t.muted, fontSize: 11, formatter: (v) => compact(v) },
+    axisLabel: { color: t.muted, fontSize: 12, formatter: (v) => compact(v) },
     ...extra,
   });
   const ok = (v, scale) => v != null && (scale !== "log" || v > 0);
@@ -75,7 +75,7 @@
           const id = narrow ? "" : ` {id|${m.hashId}}`;
           return rows[i] === selected ? `{sel|${name}}${id}` : `${name}${id}`;
         },
-        rich: { sel: { fontWeight: 700, color: t.ink, fontSize: 12 }, id: { color: t.muted, fontSize: 11 } },
+        rich: { sel: { fontWeight: 700, color: t.ink, fontSize: 12 }, id: { color: t.muted, fontSize: 12 } },
       },
       ...extra,
     };
@@ -127,13 +127,13 @@
         },
       },
       xAxis: { type: "time", ...axisStyle(t), splitLine: { show: false },
-        axisLabel: { color: t.muted, fontSize: 11, hideOverlap: true, formatter: (v) => dates.day(v) } },
+        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, formatter: (v) => dates.day(v) } },
       yAxis: valueAxis(t, scale, { name: o.unit || "", nameTextStyle: { color: t.muted, align: "left" } }),
       dataZoom: o.zoom === false ? [] : [
         { type: "inside", filterMode: "none" },
         { type: "slider", height: 26, bottom: 14, filterMode: "none", borderColor: t.rule, backgroundColor: "transparent",
           fillerColor: t.wash, handleStyle: { color: t.surface, borderColor: t.ink2 },
-          moveHandleStyle: { color: t.rule }, textStyle: { color: t.muted, fontSize: 11 },
+          moveHandleStyle: { color: t.rule }, textStyle: { color: t.muted, fontSize: 12 },
           labelFormatter: (v) => dates.day(v),
           dataBackground: { lineStyle: { color: t.context, opacity: 0.7 }, areaStyle: { color: t.context, opacity: 0.15 } },
           selectedDataBackground: { lineStyle: { color: t.emph }, areaStyle: { color: t.emph, opacity: 0.12 } } },
@@ -170,7 +170,7 @@
       xAxis: {
         type: "category", data: labels, ...axisStyle(t), splitLine: { show: false }, axisLine: { show: false },
         axisLabel: {
-          color: t.muted, fontSize: 11,
+          color: t.muted, fontSize: 12,
           hideOverlap: true,
           interval: (i) => new Date(an.hours[i]).getUTCHours() === 0 && Math.round((an.hours[i] - an.hours[0]) / ROCIS.util.DAY) % dayEvery === 0,
           formatter: (v, i) => dates.day(an.hours[i]),
@@ -216,7 +216,7 @@
         },
       },
       xAxis: { type: "category", data: hours, boundaryGap: false, ...axisStyle(t), splitLine: { show: false },
-        axisLabel: { color: t.muted, fontSize: 11, interval: 5 } },
+        axisLabel: { color: t.muted, fontSize: 12, interval: 5 } },
       yAxis: valueAxis(t, o.scale),
       series: [
         { type: "line", data: q1, stack: "band", lineStyle: { opacity: 0 }, showSymbol: false, silent: true, areaStyle: { opacity: 0 } },
@@ -277,7 +277,7 @@
       tooltip: { ...base(t).tooltip, trigger: "item",
         formatter: (p) => tipBox(t, c.monitors[rows[p.value[0]]].label, [{ value: `${dates.time(p.value[1])} to ${dates.time(p.value[2])}`, label: "" }]) },
       xAxis: { type: "time", min: c.times[an.i0], max: c.times[an.i1] + c.step, ...axisStyle(t),
-        axisLabel: { color: t.muted, fontSize: 11, hideOverlap: true, formatter: (v) => dates.day(v) } },
+        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, formatter: (v) => dates.day(v) } },
       yAxis: monitorAxis(t, c, rows, o.selected, o.narrow),
       series: [{
         type: "custom", data, encode: { x: [1, 2], y: 0 },
@@ -310,7 +310,7 @@
       calendar: {
         range: [first, last], orient: "horizontal", top: 26, left: 34, cellSize: [o.cell || 30, o.cell || 30],
         splitLine: { lineStyle: { color: t.surface, width: 3 } }, itemStyle: { borderColor: t.surface, borderWidth: 3, color: t.wash },
-        yearLabel: { show: false }, monthLabel: { color: t.ink2, fontSize: 12 }, dayLabel: { color: t.muted, fontSize: 11, firstDay: 0, nameMap: ["S", "M", "T", "W", "T", "F", "S"] },
+        yearLabel: { show: false }, monthLabel: { color: t.ink2, fontSize: 12 }, dayLabel: { color: t.muted, fontSize: 12, firstDay: 0, nameMap: ["S", "M", "T", "W", "T", "F", "S"] },
       },
       series: [{ type: "heatmap", coordinateSystem: "calendar", data }],
     };

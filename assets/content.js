@@ -18,7 +18,8 @@
         id: "names", title: "Reading a monitor name",
         html: `<p>Every monitor is named so nobody can tell which home it belongs to. A name like <b>3217_O_SQHL</b> has three parts:</p>
 <dl><dt>3217</dt><dd>The hash ID, a random number that stands in for the home. It stays the same each time a home takes part.</dd>
-<dt>O</dt><dd>Outdoor monitor.</dd><dt>SQHL</dt><dd>The neighborhood code, here Squirrel Hill. Homes outside Pennsylvania add the state, as in MEBA_ME.</dd></dl>`,
+<dt>O</dt><dd>Outdoor monitor.</dd><dt>SQHL</dt><dd>The neighborhood code, here Squirrel Hill. Homes outside Pennsylvania add the state, as in MEBA_ME.</dd></dl>
+<p>Look up any code on the <a href="#neighborhoods">Neighborhoods</a> page.</p>`,
       },
       {
         id: "process", title: "How the data is prepared",
@@ -60,7 +61,7 @@
         id: "compare", title: "Compare your monitor", audience: "Participants",
         steps: [
           ["Find your hash ID", "ROCIS sends it to you when your cohort begins."],
-          ["Highlight it", "Choose it in the monitor menu or click its row. It turns orange in every chart and the others turn gray."],
+          ["Highlight it", "Choose it in the monitor menu or click its row. It turns amber in every chart and the others turn gray."],
           ["Check the comparison chart", "If your box sits to the right of most others, your air usually had more particles."],
         ],
       },
