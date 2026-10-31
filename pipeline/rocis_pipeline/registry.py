@@ -27,6 +27,7 @@ class Settings:
     neighborhood_directory: Path
     old_explorer: Path
     raw_cohorts: list = field(default_factory=list)
+    summary: dict | None = None  # existing files, corrections file and [(cohort, raw folder)] for the summary CSV
 
 
 def _resolve(value: str) -> Path:
@@ -52,7 +53,15 @@ def load_settings(path: Path = PIPELINE_DIR / "pipeline.toml") -> Settings:
             RawCohort(int(c["cohort"]), _resolve(c["raw"]), _when(c.get("start")), _when(c.get("end")))
             for c in config.get("raw_cohorts", [])
         ],
+        summary=_summary(config.get("summary")),
     )
+
+
+def _summary(conf):
+    if not conf:
+        return None
+    return {"existing": _resolve(conf["existing"]), "corrections": _resolve(conf["corrections"]),
+            "cohorts": [(int(c["cohort"]), _resolve(c["raw"])) for c in conf.get("cohorts", [])]}
 
 
 def read_rows(path: Path) -> list:

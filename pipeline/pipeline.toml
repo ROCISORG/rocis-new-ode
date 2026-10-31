@@ -14,3 +14,22 @@ old_explorer = "../../rocis.github.io/explorer.html"
 cohort = 70
 raw = "../../rocis.github.io/cohort 70 raw outdoor data"
 start = "2026-10-01 00:00:00"
+
+# The summary CSV (one row per download, every monitor). `existing` is the folder with the latest
+# Small_/Large_round_all_unique_mark_intervention.csv; they are copied, never changed, and new rows are appended.
+# The corrections file and the raw folders name site IDs, so they live outside this repository.
+[summary]
+existing = "../../summary csv p2"
+corrections = "../../rocis-outdoor-explorer-private/summary-corrections.csv"
+
+[[summary.cohorts]]
+cohort = 68
+raw = "../../cohort 68-70 all raw/coh 68 raw dylos data"
+
+[[summary.cohorts]]
+cohort = 69
+raw = "../../cohort 68-70 all raw/coh 69 raw dylos downloads"
+
+[[summary.cohorts]]
+cohort = 70
+raw = "../../cohort 68-70 all raw/coh 70 raw dylos data"

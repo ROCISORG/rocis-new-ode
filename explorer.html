@@ -30,6 +30,7 @@
   --dot: #60a5fa;
   --wash: rgba(96, 165, 250, 0.16);
   --ramp: #0b1530,#172554,#1e3a8a,#1e40af,#1d4ed8,#2563eb,#3b82f6,#60a5fa,#93c5fd,#bfdbfe,#dbeafe;
+  --pick: #d97706,#3987e5,#199e70,#9085e9,#d55181,#008300,#e66767,#0e9fb0;
   --shadow: none;
   --font-ui: "Fira Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-label: "Fira Sans Condensed", "Fira Sans", system-ui, sans-serif;
@@ -43,6 +44,7 @@
     --rule: #e2e8f0; --rule-strong: #cbd5e1; --accent: #1e40af; --on-accent: #ffffff; --emph: #d97706; --context: #94a3b8; --dot: #3b82f6;
     --wash: rgba(59, 130, 246, 0.12);
     --ramp: #eff6ff,#dbeafe,#bfdbfe,#93c5fd,#60a5fa,#3b82f6,#2563eb,#1d4ed8,#1e40af,#1e3a8a,#172554;
+    --pick: #d97706,#2a78d6,#1baf7a,#6250d6,#e87ba4,#008300,#e34948,#0e9fb0;
     --shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   }
 }
@@ -52,6 +54,7 @@
   --rule: #e2e8f0; --rule-strong: #cbd5e1; --accent: #1e40af; --on-accent: #ffffff; --emph: #d97706; --context: #94a3b8; --dot: #3b82f6;
   --wash: rgba(59, 130, 246, 0.12);
   --ramp: #eff6ff,#dbeafe,#bfdbfe,#93c5fd,#60a5fa,#3b82f6,#2563eb,#1d4ed8,#1e40af,#1e3a8a,#172554;
+  --pick: #d97706,#2a78d6,#1baf7a,#6250d6,#e87ba4,#008300,#e34948,#0e9fb0;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 * { box-sizing: border-box; }
@@ -112,14 +115,14 @@ select:hover { border-color: var(--accent); }
 .mon-list { overflow-y: auto; max-height: 392px; display: grid; gap: 2px; margin-right: -6px; padding-right: 6px; }
 .mon { display: grid; grid-template-columns: 10px minmax(0, 1fr) 58px 92px; align-items: center; gap: 10px; min-height: 40px; padding: 6px 8px; border-radius: 8px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color .15s var(--ease); }
 .mon:hover { background: var(--raised); }
-.mon[aria-pressed="true"] { background: var(--raised); box-shadow: inset 0 0 0 1.5px var(--emph); }
-.mon .sw { width: 8px; height: 8px; border-radius: 50%; background: var(--context); }
-.mon[aria-pressed="true"] .sw { background: var(--emph); }
+.mon[aria-pressed="true"] { background: var(--raised); box-shadow: inset 0 0 0 1.5px var(--pc, var(--emph)); }
+.mon .sw { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--context); }
+.mon[aria-pressed="true"] .sw { background: var(--pc, var(--emph)); border-color: var(--pc, var(--emph)); }
 .mon .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mon .nm small { color: var(--muted); margin-left: 6px; font: 500 12px var(--font-data); }
 .mon .md { text-align: right; font: 600 14px var(--font-data); }
 .mon svg path { fill: none; stroke: var(--ink-2); stroke-width: 1.5; }
-.mon[aria-pressed="true"] svg path { stroke: var(--emph); }
+.mon[aria-pressed="true"] svg path { stroke: var(--pc, var(--emph)); }
 .list-head { display: grid; grid-template-columns: 10px minmax(0, 1fr) 58px 92px; gap: 10px; padding: 0 8px 4px; font: 600 12px var(--font-label); color: var(--muted); }
 .list-head span:nth-child(3) { text-align: right; }
 
@@ -147,6 +150,42 @@ ol.steps li span { color: var(--ink-2); }
 .doc-table th, .doc-table td { text-align: left; padding: 8px; border-bottom: 1px solid var(--rule); }
 
 .bar[hidden] { display: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.lbl-row { display: flex; align-items: center; gap: 6px; }
+.panel .ttl { display: flex; align-items: center; gap: 8px; }
+.info { position: relative; display: inline-grid; place-items: center; flex: none; width: 20px; height: 20px; padding: 0; border-radius: 50%; border: 1.5px solid var(--muted); background: none; color: var(--muted); font: 700 12px/1 var(--font-ui); font-style: italic; cursor: pointer; transition: border-color .15s var(--ease), color .15s var(--ease); }
+.info::after { content: ""; position: absolute; inset: -12px; } /* a 44px target around the small circle */
+.info:hover, .info[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.tip-pop { position: fixed; z-index: 60; max-width: min(320px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--rule-strong); border-radius: 10px; padding: 10px 12px; font: 400 14px/1.5 var(--font-ui); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18); }
+.tip-pop[hidden] { display: none; }
+.picker { position: relative; }
+.pick-btn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 44px; padding: 6px 10px; font: 500 15px var(--font-ui); color: var(--ink); text-align: left; background: var(--raised); border: 1px solid var(--rule-strong); border-radius: 8px; cursor: pointer; transition: border-color .15s var(--ease); }
+.pick-btn:hover, .pick-btn[aria-expanded="true"] { border-color: var(--accent); }
+.pick-btn .dots { display: flex; gap: 3px; flex: none; }
+.pick-btn .dots i { width: 10px; height: 10px; border-radius: 50%; }
+.pick-btn svg { flex: none; color: var(--muted); }
+#pickText { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-panel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; width: min(380px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--rule-strong); border-radius: 12px; padding: 12px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); font-family: var(--font-ui); }
+.pick-panel[hidden] { display: none; }
+.pick-note { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); font-weight: 400; }
+.pick-msg { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--ink); min-height: 0; }
+.pick-msg:empty { display: none; }
+.pick-panel fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.pick-list { max-height: min(340px, 50vh); overflow-y: auto; display: grid; gap: 2px; }
+.pick-item { display: grid; grid-template-columns: 18px 12px minmax(0, 1fr); align-items: center; gap: 10px; min-height: 40px; padding: 4px 8px; border-radius: 8px; color: var(--ink); font: 500 14px var(--font-ui); cursor: pointer; }
+.pick-item:hover { background: var(--raised); }
+.pick-item input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.pick-item .sw { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--rule-strong); }
+.pick-item span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-item small { color: var(--muted); font: 500 12px var(--font-data); margin-left: 6px; }
+.pick-item.off { color: var(--muted); cursor: not-allowed; }
+.pick-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.pick-actions button { min-height: 40px; padding: 0 14px; border-radius: 8px; font: 600 14px var(--font-ui); cursor: pointer; border: 1px solid var(--rule-strong); background: var(--raised); color: var(--ink); }
+.pick-actions button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.dates { display: flex; gap: 8px; }
+.dates label { display: grid; gap: 4px; flex: 1; }
+.dates input { font: 500 15px var(--font-ui); color: var(--ink); background: var(--raised); border: 1px solid var(--rule-strong); border-radius: 8px; padding: 6px 8px; min-height: 44px; width: 100%; color-scheme: inherit; }
+.field[hidden] { display: none; }
 .nb-page { margin-top: 12px; padding: 20px 22px 22px; }
 .nb-page h1 { font-size: 24px; font-weight: 800; color: var(--heading); margin: 0 0 4px; }
 .nb-page .lede { color: var(--ink-2); margin: 0 0 14px; max-width: 75ch; }
@@ -195,6 +234,7 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
   .seg button { padding: 6px 5px; font-size: 13px; }
   .seg { min-width: 0; }
   .nb-page { padding: 14px 12px 16px; }
+  .pick-panel { width: auto; right: 0; }
   .kpi .v { font-size: 22px; }
 }
 </style>
@@ -223,51 +263,72 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
   <main id="main">
     <div class="bar" id="controlBar" role="group" aria-label="Choose what to show">
       <label class="field wide">Cohort<select id="cohortSel"></select></label>
-      <div class="field"><span id="mLbl">Particles</span><div class="seg" role="group" aria-labelledby="mLbl">
+      <div class="field"><span class="lbl-row"><span id="mLbl">Particles</span><button type="button" class="info" data-tip="particles" aria-label="About the particle sizes">i</button></span><div class="seg" role="group" aria-labelledby="mLbl">
         <button type="button" data-measure="total" aria-pressed="true">Total</button>
-        <button type="button" data-measure="large" aria-pressed="false">Large</button></div></div>
+        <button type="button" data-measure="large" aria-pressed="false">Large</button>
+        <button type="button" data-measure="small" aria-pressed="false">Small</button></div></div>
       <div class="field"><span id="pLbl">Monitors</span><div class="seg" role="group" aria-labelledby="pLbl">
         <button type="button" data-region="all" aria-pressed="true">All</button>
         <button type="button" data-region="pa" aria-pressed="false">PA only</button></div></div>
-      <label class="field wide">Highlight<select id="monitorSel"></select></label>
+      <div class="field wide"><span id="cLbl">Compare</span>
+        <div class="picker">
+          <button type="button" class="pick-btn" id="pickBtn" aria-expanded="false" aria-controls="pickPanel" aria-labelledby="cLbl pickText">
+            <span class="dots" id="pickDots" aria-hidden="true"></span><span id="pickText">1 monitor</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="pick-panel" id="pickPanel" hidden>
+            <p class="pick-note">Pick up to 8 monitors. Each one gets its own color in every chart.</p>
+            <p class="pick-msg" id="pickMsg" aria-live="polite"></p>
+            <fieldset><legend class="sr">Monitors to compare</legend><div class="pick-list" id="pickList"></div></fieldset>
+            <div class="pick-actions"><button type="button" id="pickReset">Back to one</button><button type="button" class="primary" id="pickDone">Done</button></div>
+          </div>
+        </div></div>
+      <div class="field"><span id="oLbl">Other monitors</span><div class="seg" role="group" aria-labelledby="oLbl">
+        <button type="button" data-others="show" aria-pressed="true">Show</button>
+        <button type="button" data-others="hide" aria-pressed="false">Hide</button></div></div>
       <div class="field"><span id="rLbl">Range</span><div class="seg" role="group" aria-labelledby="rLbl">
         <button type="button" data-range="all" aria-pressed="true">All</button>
         <button type="button" data-range="7d" aria-pressed="false">7 days</button>
-        <button type="button" data-range="1d" aria-pressed="false">24 h</button></div></div>
+        <button type="button" data-range="1d" aria-pressed="false">24 h</button>
+        <button type="button" data-range="custom" aria-pressed="false">Dates</button></div></div>
+      <div class="field wide" id="customField" hidden><span>Dates</span><div class="dates">
+        <label><span class="sr">From</span><input type="date" id="fromDate" aria-label="From"></label>
+        <label><span class="sr">To</span><input type="date" id="toDate" aria-label="To"></label></div></div>
       <div class="field"><span id="sLbl">Scale</span><div class="seg" role="group" aria-labelledby="sLbl">
         <button type="button" data-scale="value" aria-pressed="true">Linear</button>
         <button type="button" data-scale="log" aria-pressed="false">Log</button></div></div>
       <div class="field"><span id="dLbl">Download CSV</span><div class="seg" role="group" aria-labelledby="dLbl">
         <button type="button" data-dl="total">Total</button>
-        <button type="button" data-dl="large">Large</button></div></div>
+        <button type="button" data-dl="large">Large</button>
+        <button type="button" data-dl="small">Small</button></div></div>
     </div>
 
     <section class="view" id="view-overview">
       <div class="kpis" id="kpis"></div>
       <div class="grid">
         <div class="panel s8">
-          <header><h2>Readings over time</h2><p>Gray lines are the other monitors. Scroll or drag the handles to zoom</p></header>
+          <header><div class="ttl"><h2>Readings over time</h2><button type="button" class="info" data-tip="timeline" aria-label="About Readings over time">i</button></div><p>Scroll or drag the handles to zoom</p></header>
           <div id="tsChart"></div>
         </div>
         <div class="panel s4">
-          <header><h2>Monitors</h2><p id="listNote">Daily middle reading</p></header>
-          <div class="list-head"><span></span><span>Monitor</span><span>Middle</span><span>Daily trend</span></div>
+          <header><div class="ttl"><h2>Monitors</h2><button type="button" class="info" data-tip="list" aria-label="About the monitor list">i</button></div><p id="listNote"></p></header>
+          <div class="list-head"><span></span><span>Monitor</span><span>Median</span><span>Daily trend</span></div>
           <div class="mon-list" id="monList"></div>
         </div>
         <div class="panel s12">
-          <header><h2>Hour by hour</h2><p>Busiest air at the top. Click a row to highlight it.</p></header>
+          <header><div class="ttl"><h2>Hour by hour</h2><button type="button" class="info" data-tip="heatmap" aria-label="About Hour by hour">i</button></div><p>Highest median at the top. Click a row to compare it</p></header>
           <div id="heatChart"></div>
         </div>
         <div class="panel s6">
-          <header><h2>Time of day</h2><p>Middle half shaded</p></header>
+          <header><div class="ttl"><h2>Time of day</h2><button type="button" class="info" data-tip="profile" aria-label="About Time of day">i</button></div><p>Middle 50% of all monitors shaded</p></header>
           <div id="profileChart"></div>
         </div>
         <div class="panel s6">
-          <header><h2>Distribution</h2><p>10th to 90th percentile</p></header>
+          <header><div class="ttl"><h2>Distribution</h2><button type="button" class="info" data-tip="distribution" aria-label="About Distribution">i</button></div><p>Box: middle 50%. Whiskers: 10th to 90th percentile</p></header>
           <div id="boxChart"></div>
         </div>
         <div class="panel s12">
-          <header><h2>Reporting</h2><p>Gaps mean the monitor was off or between downloads</p></header>
+          <header><div class="ttl"><h2>Reporting</h2><button type="button" class="info" data-tip="coverage" aria-label="About Reporting">i</button></div><p>Gaps mean the monitor was off or between downloads</p></header>
           <div id="covChart"></div>
         </div>
       </div>
@@ -276,7 +337,7 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
     <section class="view" id="view-neighborhoods">
       <div class="panel nb-page">
         <h1>Neighborhood codes</h1>
-        <p class="lede">Every monitor name ends in a neighborhood code, like <b>SQHL</b> in 3217_O_SQHL (Squirrel Hill). Search by code to see where a monitor is, or by place to find its code. Neighborhoods with data link straight to the latest cohort they were in.</p>
+        <p class="lede">Every monitor name ends in a neighborhood code, like <b>SQHL</b> in 3217_O_SQHL (Squirrel Hill). Search by code to see where a monitor is, or by place to find its code. Only neighborhoods with published data are listed, and each one opens the latest cohort it was in.</p>
         <div class="nb-tools">
           <label class="field wide">Search<input id="nbSearch" type="search" placeholder="A code or a place, like SQHL or Squirrel Hill" autocomplete="off"></label>
           <div class="field"><span id="nbRLbl">Area</span><div class="seg" role="group" aria-labelledby="nbRLbl">
@@ -284,9 +345,6 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
             <button type="button" data-nb="allegheny" aria-pressed="false">Allegheny</button>
             <button type="button" data-nb="pa" aria-pressed="false">Rest of PA</button>
             <button type="button" data-nb="other" aria-pressed="false">Other states</button></div></div>
-          <div class="field"><span id="nbDLbl">Show</span><div class="seg" role="group" aria-labelledby="nbDLbl">
-            <button type="button" data-nbdata="all" aria-pressed="true">All codes</button>
-            <button type="button" data-nbdata="data" aria-pressed="false">With data</button></div></div>
         </div>
         <p class="nb-count" id="nbCount" aria-live="polite"></p>
         <div id="nbList"></div>
@@ -326,15 +384,93 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
     return svg;
   }
 
+  const KINDS = { total: "Total", large: "Large", small: "Small" };
+  const TIPS = {
+    particles: "Total counts every particle larger than about 0.5 micrometers. Large counts only those larger than about 2.5 micrometers. Small is Total minus Large: particles between about 0.5 and 2.5 micrometers.",
+    reporting: "Monitors with at least one reading in the chosen dates, out of all the monitors shown.",
+    median: "Half of all 15-minute readings in the chosen dates were above this number and half were below. It covers every monitor shown, so one very high reading barely moves it.",
+    highest: "Each monitor's readings are turned into one median per hour. This is the highest of those hourly medians in the chosen dates, with the monitor and the hour it happened.",
+    received: "The share of expected 15-minute readings that arrived, across every monitor shown and the chosen dates. Monitors that started late, stopped early or were between downloads lower it.",
+    timeline: "Each line is one monitor's 15-minute average. Compared monitors have their own color; the others are gray. Use Compare to pick up to 8 monitors.",
+    list: "Each monitor's median over the chosen dates, with a line of its daily medians. Click a row to add it to the comparison or take it out.",
+    heatmap: "Each cell is one monitor's median for one hour. Darker cells mean more particles. Rows are sorted with the highest median at the top.",
+    profile: "The median at each hour of the day, across every day in the chosen dates. The shaded band is the middle 50% of all monitors' readings.",
+    distribution: "Each box spans the middle 50% of a monitor's readings, from the 25th to the 75th percentile. The line inside is the median and the whiskers reach the 10th and 90th percentiles.",
+    coverage: "Bars show when each monitor sent readings in the chosen dates. Gaps mean it was unplugged or between downloads.",
+  };
+  const info = (key, label) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "info"; b.dataset.tip = key; b.textContent = "i";
+    b.setAttribute("aria-label", `About ${label}`);
+    return b;
+  };
+
+  // ---------- compare menu ----------
+  const pickBtn = $("pickBtn"), pickPanel = $("pickPanel");
+  const openPicker = (open) => {
+    pickPanel.hidden = !open;
+    pickBtn.setAttribute("aria-expanded", String(open));
+    if (open) { $("pickMsg").textContent = ""; const first = pickPanel.querySelector("input:not(:disabled)"); first && first.focus(); }
+  };
+  pickBtn.addEventListener("click", () => openPicker(pickPanel.hidden));
+  $("pickDone").addEventListener("click", () => { openPicker(false); pickBtn.focus(); });
+  $("pickReset").addEventListener("click", () => app.reset());
+  document.addEventListener("click", (e) => { if (!pickPanel.hidden && !e.target.closest(".picker")) openPicker(false); });
+  pickPanel.addEventListener("keydown", (e) => { if (e.key === "Escape") { openPicker(false); pickBtn.focus(); } });
+
+  function renderPicker(a) {
+    const c = a.cohort, picked = a.state.picked, full = picked.length >= a.MAX_PICKS;
+    const n = picked.length;
+    $("pickText").textContent = n === 1 ? c.monitors[picked[0]].name : `${n} monitors`;
+    $("pickDots").replaceChildren(...picked.map((i) => { const d = document.createElement("i"); d.style.background = a.colorOf(i); return d; }));
+    const focused = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.idx;
+    $("pickList").replaceChildren(...[...c.monitors].sort((x, y) => x.name.localeCompare(y.name)).map((m) => {
+      const on = picked.includes(m.idx);
+      const row = document.createElement("label"); row.className = "pick-item";
+      const box = document.createElement("input"); box.type = "checkbox"; box.checked = on; box.dataset.idx = String(m.idx);
+      box.disabled = (!on && full) || (on && n === 1);
+      if (!on && full) row.classList.add("off");
+      box.addEventListener("change", () => a.toggle(m.idx));
+      const sw = document.createElement("span"); sw.className = "sw";
+      if (on) { sw.style.background = a.colorOf(m.idx); sw.style.borderColor = a.colorOf(m.idx); }
+      const nm = document.createElement("span"); nm.textContent = m.name;
+      const id = document.createElement("small"); id.textContent = m.hashId; nm.append(id);
+      row.append(box, sw, nm);
+      return row;
+    }));
+    if (focused != null) { const again = $("pickList").querySelector(`input[data-idx="${focused}"]`); again && again.focus(); }
+  }
+
+  // ---------- custom dates ----------
+  const dayOf = (ms) => new Date(ms).toISOString().slice(0, 10);
+  function fillDates(a) {
+    const c = a.cohort, an = a.analysis;
+    [$("fromDate"), $("toDate")].forEach((el) => { el.min = dayOf(c.times[0]); el.max = dayOf(c.times[c.points - 1]); });
+    $("fromDate").value = dayOf(c.times[an.i0]);
+    $("toDate").value = dayOf(c.times[an.i1]);
+  }
+  function datesChanged() {
+    let from = Date.parse($("fromDate").value), to = Date.parse($("toDate").value);
+    if (Number.isNaN(from) || Number.isNaN(to)) return;
+    if (from > to) [from, to] = [to, from];
+    app.setCustom(from, to);
+  }
+  $("fromDate").addEventListener("change", datesChanged);
+  $("toDate").addEventListener("change", datesChanged);
+
   const app = ROCIS.createApp({
     els: { timeSeries: $("tsChart"), heatmap: $("heatChart"), profile: $("profileChart"), boxplot: $("boxChart"), coverage: $("covChart") },
     controls: {
-      cohort: $("cohortSel"), monitor: $("monitorSel"),
+      cohort: $("cohortSel"),
       measure: [...document.querySelectorAll("[data-measure]")],
       range: [...document.querySelectorAll("[data-range]")],
       scale: [...document.querySelectorAll("[data-scale]")],
       region: [...document.querySelectorAll("[data-region]")],
+      others: [...document.querySelectorAll("[data-others]")],
     },
+    onRange(range) { $("customField").hidden = range !== "custom"; },
+    onCohort(a) { $("customField").hidden = a.state.range !== "custom"; },
+    onLimit(max) { $("pickMsg").textContent = `You can compare up to ${max} monitors. Take one out to add another.`; },
     // explorer.html?cohort=N opens that cohort (links from the start page)
     startCohort: (() => {
       const n = +new URLSearchParams(location.search).get("cohort");
@@ -353,16 +489,18 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
       $("cardCohort").textContent = `Cohort ${c.cohort}`;
       const outside = a.hidden ? `, ${a.hidden} outside PA hidden` : "";
       $("cardDates").textContent = `${U.dates.range(c.times[an.i0], c.times[an.i1])}, ${c.monitors.length} monitors${outside}`;
-      const kind = a.state.measure === "total" ? "Total" : "Large";
+      const kind = KINDS[a.state.measure];
       const tiles = [
-        { l: "Monitors reporting", v: `${an.reporting}`, n: `of ${c.monitors.length}${a.hidden ? " in Pennsylvania" : ""}` },
-        { l: `${kind} particles, middle reading`, v: U.fmt(an.overallMedian), n: "per 0.01 ft³, daily trend", spark: an.dailyOverall },
-        { l: "Busiest hour", v: an.busiest.m ? U.fmt(an.busiest.v) : "None", n: an.busiest.m ? `${an.busiest.m.name}, ${U.dates.hour(an.busiest.t)}` : "" },
-        { l: "Readings received", v: `${Math.round(an.completeness * 100)}%`, n: `over ${an.spanDays >= 2 ? Math.round(an.spanDays) + " days" : Math.round(an.spanDays * 24) + " hours"}` },
+        { l: "Monitors reporting", tip: "reporting", v: `${an.reporting}`, n: `of ${c.monitors.length}${a.hidden ? " in Pennsylvania" : ""}` },
+        { l: `${kind} particles, median`, tip: "median", v: U.fmt(an.overallMedian), n: "per 0.01 ft³, with daily medians", spark: an.dailyOverall },
+        { l: "Highest hourly reading", tip: "highest", v: an.busiest.m ? U.fmt(an.busiest.v) : "None", n: an.busiest.m ? `${an.busiest.m.name}, ${U.dates.hour(an.busiest.t)}` : "" },
+        { l: "Readings received", tip: "received", v: `${Math.round(an.completeness * 100)}%`, n: `over ${an.spanDays >= 2 ? Math.round(an.spanDays) + " days" : Math.round(an.spanDays * 24) + " hours"}` },
       ];
       $("kpis").replaceChildren(...tiles.map((t) => {
         const d = document.createElement("div"); d.className = "kpi";
-        const l = document.createElement("div"); l.className = "l"; l.textContent = t.l;
+        const l = document.createElement("div"); l.className = "l lbl-row";
+        const txt = document.createElement("span"); txt.textContent = t.l;
+        l.append(txt, info(t.tip, t.l));
         const v = document.createElement("div"); v.className = "v"; v.textContent = t.v;
         d.append(l, v);
         if (t.spark) { const s = spark(t.spark, 96, 30); s.querySelector("path").setAttribute("style", "fill:none;stroke:var(--accent);stroke-width:1.5"); d.append(s); }
@@ -374,17 +512,21 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
       list.replaceChildren(...an.order.map((mi) => {
         const m = c.monitors[mi], s = an.stats[mi];
         const b = document.createElement("button"); b.type = "button"; b.className = "mon";
-        b.setAttribute("aria-pressed", String(mi === a.state.monitor));
-        b.setAttribute("aria-label", `${m.label}, middle reading ${U.fmt(s.med)}`);
+        const on = a.state.picked.includes(mi);
+        b.setAttribute("aria-pressed", String(on));
+        if (on) b.style.setProperty("--pc", a.colorOf(mi));
+        b.setAttribute("aria-label", `${m.label}, median ${U.fmt(s.med)}. ${on ? "In" : "Add to"} the comparison`);
         const sw = document.createElement("span"); sw.className = "sw";
         const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = m.name;
         const id = document.createElement("small"); id.textContent = m.hashId; nm.append(id);
         const md = document.createElement("span"); md.className = "md"; md.textContent = s.n ? U.fmt(s.med) : "–";
         b.append(sw, nm, md, spark(an.daily[mi], 92, 24));
-        b.addEventListener("click", () => app.select(mi));
+        b.addEventListener("click", () => app.toggle(mi));
         return b;
       }));
-      $("listNote").textContent = `${kind.toLowerCase()} particles, busiest first`;
+      $("listNote").textContent = `${kind} particles, ${U.dates.range(c.times[an.i0], c.times[an.i1])}, highest median first`;
+      renderPicker(a);
+      if (a.state.range === "custom" || $("customField").hidden) fillDates(a);
 
       document.title = `Cohort ${c.cohort}, ROCIS Outdoor Data Explorer`;
     },
@@ -392,6 +534,42 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
   });
 
   document.querySelectorAll("[data-dl]").forEach((b) => b.addEventListener("click", () => app.cohort && U.download(app.cohort, b.dataset.dl)));
+
+  // ---------- ⓘ explanations: open on hover, keyboard focus or tap; Escape closes ----------
+  const pop = document.createElement("div");
+  pop.id = "tipPop"; pop.className = "tip-pop"; pop.setAttribute("role", "tooltip"); pop.hidden = true;
+  document.body.append(pop);
+  let tipBtn = null, pinned = false;
+  function openTip(b, pin) {
+    if (tipBtn && tipBtn !== b) closeTip();
+    tipBtn = b; pinned = pin;
+    pop.textContent = TIPS[b.dataset.tip] || "";
+    pop.hidden = false;
+    b.setAttribute("aria-expanded", "true");
+    b.setAttribute("aria-describedby", "tipPop");
+    const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    const left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    const below = r.bottom + 8 + h < window.innerHeight;
+    pop.style.left = `${left}px`;
+    pop.style.top = `${below ? r.bottom + 8 : r.top - h - 8}px`;
+  }
+  function closeTip() {
+    if (!tipBtn) return;
+    tipBtn.setAttribute("aria-expanded", "false");
+    tipBtn.removeAttribute("aria-describedby");
+    pop.hidden = true; tipBtn = null; pinned = false;
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".info");
+    if (!b) return closeTip();
+    if (tipBtn === b && pinned) return closeTip();
+    openTip(b, true);
+  });
+  document.addEventListener("mouseover", (e) => { const b = e.target.closest(".info"); if (b && tipBtn !== b) openTip(b, false); });
+  document.addEventListener("mouseout", (e) => { const b = e.target.closest(".info"); if (b && b === tipBtn && !pinned) closeTip(); });
+  document.addEventListener("focusin", (e) => { const b = e.target.closest(".info"); if (b) openTip(b, false); else if (!pinned) closeTip(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeTip(); });
+  window.addEventListener("scroll", () => { if (tipBtn) closeTip(); }, { passive: true });
   const themeBtn = $("themeBtn");
   const isDark = () => getComputedStyle(document.documentElement).colorScheme.includes("dark");
   const syncTheme = () => { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; };
@@ -424,8 +602,10 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
     const where = area === "other" ? STATES[n.state] || n.state : n.county || "Pennsylvania";
     return { code, name: n.name, where, area, cohorts: usedIn[code] || [] };
   });
+  // codes in the directory that never had a monitor aren't listed (Matt, Oct 2026)
+  const withData = places.filter((p) => p.cohorts.length);
   const AREAS = [["allegheny", "Allegheny County"], ["pa", "Elsewhere in Pennsylvania"], ["other", "Other states"]];
-  const nb = { q: "", area: "all", data: "all" };
+  const nb = { q: "", area: "all" };
 
   function nbItem(p) {
     const n = p.cohorts.length;
@@ -451,9 +631,9 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
 
   function renderNeighborhoods() {
     const q = nb.q.trim().toLowerCase();
-    const match = (p) => (nb.area === "all" || p.area === nb.area) && (nb.data === "all" || p.cohorts.length)
+    const match = (p) => (nb.area === "all" || p.area === nb.area)
       && (!q || p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q) || p.where.toLowerCase().includes(q));
-    const shown = places.filter(match);
+    const shown = withData.filter(match);
     const groups = [];
     AREAS.forEach(([area, title]) => {
       const inArea = shown.filter((p) => p.area === area);
@@ -483,10 +663,11 @@ button.nb:hover { border-color: var(--accent); background: var(--surface); }
       groups.push(empty);
     }
     $("nbList").replaceChildren(...groups);
-    $("nbCount").textContent = `Showing ${shown.length} of ${places.length} codes`;
+    $("nbCount").textContent = shown.length === withData.length
+      ? `${withData.length} neighborhoods with data` : `Showing ${shown.length} of ${withData.length} neighborhoods with data`;
   }
   $("nbSearch").addEventListener("input", (e) => { nb.q = e.target.value; renderNeighborhoods(); });
-  [["nb", "area"], ["nbdata", "data"]].forEach(([attr, key]) => {
+  [["nb", "area"]].forEach(([attr, key]) => {
     const btns = [...document.querySelectorAll(`[data-${attr}]`)];
     btns.forEach((b) => b.addEventListener("click", () => {
       nb[key] = b.dataset[attr];

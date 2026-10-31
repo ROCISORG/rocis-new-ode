@@ -9,6 +9,7 @@ from rocis_pipeline.dylos import identify, read_log
 from rocis_pipeline.process import average_15, build_from_raw
 from rocis_pipeline.published import import_cohort
 from rocis_pipeline.registry import PIPELINE_DIR, RawCohort, Registry, load_neighborhoods, load_settings
+from rocis_pipeline.summary import fmt, parse_name, when
 
 
 class FileNames(unittest.TestCase):
@@ -80,6 +81,35 @@ class MatchesPublishedCohort69(unittest.TestCase):
                     same += math.isclose(value, by_column[monitor.column].total[stamp], rel_tol=1e-9)
         self.assertGreater(compared, 10000)
         self.assertGreaterEqual(same / compared, 0.999)
+
+
+class SummaryNames(unittest.TestCase):
+    def test_hand_typed_variants(self):
+        cases = {  # name -> (site, location, monitor, date, room, floor)
+            "XQA_I_D057_05-07-2026_Living Room.log": ("XQA", "I", "D057", "05-07-26", "LIVINGROOM", "-"),
+            "XQA_i_D057_05-14-2026-dining.txt": ("XQA", "I", "D057", "05-14-26", "DINING", "-"),
+            "XQB_I_D 277_05-08-2026_Master Bedroom": ("XQB", "I", "D277", "05-08-26", "MASTERBEDROOM", "-"),
+            "XQB_I_D_120_06_01_2026 Living Room_DATA IS DUPLICATED": ("XQB", "I", "D120", "06-01-26", "LIVINGROOM", "-"),
+            "XQC_BED-R-D228_8.12.26.log": ("XQC", "R", "D228", "08-12-26", "-", "-"),
+            "XQD_I_D095_08092026_DiningRoom.log": ("XQD", "I", "D095", "08-09-26", "DININGROOM", "-"),
+            "XQD_I_D260-08-19-26_FirstFloor.log": ("XQD", "I", "D260", "08-19-26", "-", "1STFLOOR"),
+            "XQE_R_D017_06-06-26_2ND FLBR": ("XQE", "R", "D017", "06-06-26", "BR", "2NDFLOOR"),
+            "XQE_O_D026_possible errror_07-05-26": ("XQE", "O", "D026", "07-05-26", "-", "-"),
+            "XQE_I_06-06-26_near kitchen": ("XQE", "I", "", "06-06-26", "NEARKITCHEN", "-"),
+        }
+        for name, expected in cases.items():
+            p = parse_name(name)
+            got = (p.site, p.location, p.monitor, f"{p.day:%m-%d-%y}" if p.day else "", p.room, p.floor)
+            self.assertEqual(got, expected, name)
+
+    def test_problems_are_reported(self):
+        self.assertIn("no monitor number (Dnnn) in the name", parse_name("XQE_I_06-06-26_near kitchen").problems)
+        self.assertTrue(any('"L"' in p for p in parse_name("XQA_L_D216_10-18-26_Living").problems))
+        self.assertTrue(any("4 digits" in p for p in parse_name("XQA_R_D2428_05-30-26_BEDROOM").problems))
+
+    def test_number_and_time_formats_match_existing_files(self):
+        self.assertEqual([fmt(590.04, 1), fmt(2157.2, 1), fmt(534.5, 2), fmt(12.25, 2)], ["590", "2157.2", "534.5", "12.25"])
+        self.assertEqual(when(datetime(2026, 3, 3, 9, 10)), "2026-03-03 9:10:00")
 
 
 if __name__ == "__main__":

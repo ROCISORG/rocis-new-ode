@@ -47,6 +47,8 @@
     d.monitors.forEach((m, i) => {
       m.idx = i;
       m.label = `${m.name} (${m.hashId})`;
+      // Dylos Small: particles between about 0.5 and 2.5 micrometers, the total minus the large channel
+      m.small = m.total.map((v, k) => (v == null || m.large[k] == null ? null : Math.max(0, v - m.large[k])));
     });
     return { ...d, t0, step, times };
   }
@@ -96,12 +98,21 @@
   };
 
   // ---------- windows ----------
-  function windowIdx(c, range) {
+  function windowIdx(c, range, custom) {
     const last = c.points - 1;
     // the cohort's last reading, not the end of the grid, anchors "last N days"
     let end = last;
     while (end > 0 && !c.monitors.some((m) => m.total[end] != null || m.large[end] != null)) end--;
     if (range === "all") return [0, last];
+    if (range === "custom") {
+      // whole days on the monitors' clock, from the start of `from` to the end of `to`
+      const from = custom && custom.from != null ? custom.from : c.times[0];
+      const to = (custom && custom.to != null ? custom.to : c.times[last]) + DAY - c.step;
+      let a = 0, b = last;
+      while (a < last && c.times[a] < from) a++;
+      while (b > a && c.times[b] > to) b--;
+      return [a, b];
+    }
     const span = range === "7d" ? 7 * DAY : DAY;
     const startT = c.times[end] - span + c.step;
     let i0 = 0;
@@ -220,7 +231,8 @@
     const url = URL.createObjectURL(new Blob([toCsv(c, measure)], { type: "text/csv" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${measure === "total" ? "small" : "large"}_${c.cohort}.csv`;
+    // "small_N.csv" has always meant the total channel; the computed small channel gets its own name
+    a.download = `${{ total: "small", large: "large", small: "dylos_small" }[measure]}_${c.cohort}.csv`;
     document.body.append(a);
     a.click();
     a.remove();

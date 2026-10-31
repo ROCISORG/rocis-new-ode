@@ -3,7 +3,8 @@
    ECharts options, so one set of chart logic serves every look. */
 (function () {
   const ROCIS = (window.ROCIS = window.ROCIS || {});
-  const { fmt, compact, dates } = ROCIS.util;
+  const U = ROCIS.util;
+  const { fmt, compact, dates } = U;
 
   function theme(root = document.documentElement) {
     const cs = getComputedStyle(root);
@@ -62,8 +63,15 @@
   });
   const ok = (v, scale) => v != null && (scale !== "log" || v > 0);
 
-  // y axis listing monitors; categories use the unique label so duplicate neighborhoods stay distinct
-  function monitorAxis(t, c, rows, selected, narrow = false, extra = {}) {
+  // picked monitors as idx -> { color, k } for the builders below
+  const pickMap = (picks) => new Map((picks || []).map((p, k) => [p.idx, { color: p.color, k }]));
+
+  // y axis listing monitors; categories use the unique label so duplicate neighborhoods stay distinct.
+  // Picked monitors get a dot in their color and a bold name, so color never carries identity alone.
+  function monitorAxis(t, c, rows, picks, narrow = false, extra = {}) {
+    const picked = pickMap(picks);
+    const rich = { sel: { fontWeight: 700, color: t.ink, fontSize: 12 }, id: { color: t.muted, fontSize: 12 } };
+    picked.forEach(({ color, k }) => { rich[`c${k}`] = { color, fontSize: 13 }; });
     return {
       type: "category", data: rows.map((mi) => c.monitors[mi].label), ...axisStyle(t), splitLine: { show: false },
       axisLine: { show: false }, triggerEvent: true,
@@ -73,68 +81,81 @@
           const m = c.monitors[rows[i]];
           const name = narrow && m.name.length > 13 ? `${m.name.slice(0, 12)}…` : m.name;
           const id = narrow ? "" : ` {id|${m.hashId}}`;
-          return rows[i] === selected ? `{sel|${name}}${id}` : `${name}${id}`;
+          const p = picked.get(rows[i]);
+          return p ? `{c${p.k}|●} {sel|${name}}${id}` : `${name}${id}`;
         },
-        rich: { sel: { fontWeight: 700, color: t.ink, fontSize: 12 }, id: { color: t.muted, fontSize: 12 } },
+        rich,
       },
       ...extra,
     };
   }
 
-  // ---------- main time series: highlighted monitor in color, the rest in gray ----------
+  // date labels with the year under the first one and under any January 1. The first one is found by time, not
+  // label index: ECharts can place two labels at the start of the axis and hide one of them.
+  const dayLabel = (start) => (v) => {
+    const x = new Date(v);
+    const yearToo = v - start < U.DAY || (x.getUTCMonth() === 0 && x.getUTCDate() === 1);
+    return yearToo ? `${dates.day(v)}\n${x.getUTCFullYear()}` : dates.day(v);
+  };
+  const legendBase = (t, data, size = 13) => ({
+    type: "scroll", top: 0, left: 0, right: 40, icon: "path://M0,4 L14,4 L14,6 L0,6 Z", itemWidth: 16, itemHeight: 6,
+    textStyle: { color: t.ink2, fontSize: size }, selectedMode: false, pageIconColor: t.ink2, pageTextStyle: { color: t.muted }, data,
+  });
+
+  // ---------- main time series: picked monitors in their colors, the rest in gray ----------
   function timeSeries(c, an, o) {
     const t = theme();
-    const { measure, selected, scale } = o;
-    const series = [];
-    const order = [...c.monitors].sort((a, b) => (a.idx === selected) - (b.idx === selected));
-    order.forEach((m) => {
+    const { measure, scale } = o;
+    const picks = o.picks || [];
+    const picked = pickMap(picks);
+    const showOthers = o.others !== "hide";
+    const line = (m) => {
       const data = [];
       for (let i = an.i0; i <= an.i1; i++) {
         const v = m[measure][i];
         data.push([c.times[i], ok(v, scale) ? v : null]);
       }
-      const sel = m.idx === selected;
-      series.push({
-        name: sel ? m.label : "Other monitors",
-        type: "line", data, showSymbol: false, connectNulls: false, sampling: "lttb",
-        silent: !sel, z: sel ? 5 : 2, animation: false,
-        lineStyle: { width: sel ? 2 : 1, color: sel ? t.emph : t.context, opacity: sel ? 1 : 0.6, cap: "round", join: "round" },
-        itemStyle: { color: sel ? t.emph : t.context },
-        emphasis: { disabled: true },
-      });
-    });
+      return data;
+    };
+    const series = [];
+    if (showOthers) c.monitors.filter((m) => !picked.has(m.idx)).forEach((m) => series.push({
+      name: "Other monitors", type: "line", data: line(m), showSymbol: false, connectNulls: false, sampling: "lttb",
+      silent: true, z: 2, animation: false,
+      lineStyle: { width: 1, color: t.context, opacity: 0.6, cap: "round", join: "round" }, itemStyle: { color: t.context },
+      emphasis: { disabled: true },
+    }));
+    picks.forEach((p, k) => series.push({
+      name: c.monitors[p.idx].label, type: "line", data: line(c.monitors[p.idx]), showSymbol: false, connectNulls: false,
+      sampling: "lttb", z: 10 - k, animation: false,
+      lineStyle: { width: 2, color: p.color, cap: "round", join: "round" }, itemStyle: { color: p.color },
+      emphasis: { disabled: true },
+    }));
+    const names = picks.map((p) => c.monitors[p.idx].label);
     return {
       ...base(t),
-      grid: { left: 48, right: 18, top: o.compactTop ? 28 : 40, bottom: o.zoom === false ? 28 : 72 },
-      legend: {
-        top: 0, left: 0, icon: "path://M0,4 L14,4 L14,6 L0,6 Z", itemWidth: 16, itemHeight: 6,
-        textStyle: { color: t.ink2, fontSize: 13 }, selectedMode: false,
-        data: [c.monitors[selected].label, "Other monitors"],
-      },
+      grid: { left: 48, right: 18, top: o.compactTop ? 28 : 40, bottom: o.zoom === false ? 40 : 84 },
+      legend: legendBase(t, showOthers ? [...names, "Other monitors"] : names),
       tooltip: {
         ...base(t).tooltip, trigger: "axis",
         axisPointer: { type: "line", lineStyle: { color: t.ink2, width: 1 } },
         formatter: (params) => {
           if (!params.length) return "";
           const i = an.i0 + params[0].dataIndex;
-          const v = c.monitors[selected][measure][i];
-          const others = c.monitors.map((m) => m[measure][i]).filter((x) => x != null).sort((a, b) => a - b);
-          const mid = others.length ? others[Math.floor((others.length - 1) / 2)] : null;
-          return tipBox(t, dates.time(c.times[i]), [
-            { value: fmt(v), label: c.monitors[selected].name, color: t.emph },
-            { value: others.length ? fmt(mid) : "No readings", label: "middle of all monitors", color: t.context },
-          ]);
+          const all = c.monitors.map((m) => m[measure][i]).filter((x) => x != null).sort((a, b) => a - b);
+          const rows = picks.map((p) => ({ value: fmt(c.monitors[p.idx][measure][i]), label: c.monitors[p.idx].name, color: p.color }));
+          rows.push({ value: all.length ? fmt(U.quantile(all, 0.5)) : "No readings", label: "median of all monitors", color: t.context });
+          return tipBox(t, dates.time(c.times[i]), rows);
         },
       },
       xAxis: { type: "time", ...axisStyle(t), splitLine: { show: false },
-        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, formatter: (v) => dates.day(v) } },
+        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, lineHeight: 16, formatter: dayLabel(c.times[an.i0]) } },
       yAxis: valueAxis(t, scale, { name: o.unit || "", nameTextStyle: { color: t.muted, align: "left" } }),
       dataZoom: o.zoom === false ? [] : [
         { type: "inside", filterMode: "none" },
         { type: "slider", height: 26, bottom: 14, filterMode: "none", borderColor: t.rule, backgroundColor: "transparent",
           fillerColor: t.wash, handleStyle: { color: t.surface, borderColor: t.ink2 },
           moveHandleStyle: { color: t.rule }, textStyle: { color: t.muted, fontSize: 12 },
-          labelFormatter: (v) => dates.day(v),
+          labelFormatter: (v) => dates.dayYear(v),
           dataBackground: { lineStyle: { color: t.context, opacity: 0.7 }, areaStyle: { color: t.context, opacity: 0.15 } },
           selectedDataBackground: { lineStyle: { color: t.emph }, areaStyle: { color: t.emph, opacity: 0.12 } } },
       ],
@@ -176,7 +197,7 @@
           formatter: (v, i) => dates.day(an.hours[i]),
         },
       },
-      yAxis: monitorAxis(t, c, rows, o.selected, o.narrow),
+      yAxis: monitorAxis(t, c, rows, o.picks, o.narrow),
       visualMap: o.hideScale ? { show: false, min: Math.log10(lo), max: Math.log10(hi), dimension: 2, inRange: { color: t.ramp } } : {
         type: "continuous", min: Math.log10(lo), max: Math.log10(hi), dimension: 2, orient: "horizontal",
         left: o.labelWidth || 150, bottom: 4, itemWidth: 12, itemHeight: o.narrow ? 110 : 200, calculable: false, realtime: false,
@@ -195,23 +216,23 @@
   // ---------- hour-of-day profile ----------
   function profile(c, an, o) {
     const t = theme();
-    const sel = o.selected;
+    const picks = o.picks || [];
     const hours = Array.from({ length: 24 }, (_, h) => dates.hour12(h));
     const keep = (v) => (ok(v, o.scale) ? v : null);
     const q1 = an.hod.q1.map(keep), q3 = an.hod.q3.map(keep);
+    const label = (idx) => c.monitors[idx].label;
     return {
       ...base(t),
       grid: { left: 46, right: 14, top: 36, bottom: 30 },
-      legend: { top: 0, left: 0, icon: "path://M0,4 L14,4 L14,6 L0,6 Z", itemWidth: 16, itemHeight: 6, selectedMode: false,
-        textStyle: { color: t.ink2, fontSize: 12 }, data: [c.monitors[sel].name, "All monitors"] },
+      legend: legendBase(t, [...picks.map((p) => label(p.idx)), "All monitors, median"], 12),
       tooltip: {
         ...base(t).tooltip, trigger: "axis", axisPointer: { type: "line", lineStyle: { color: t.ink2 } },
         formatter: (ps) => {
           const h = ps[0].dataIndex;
           return tipBox(t, `${dates.hour12(h)} to ${dates.hour12((h + 1) % 24)}`, [
-            { value: fmt(an.hod.perMonitor[sel][h]), label: c.monitors[sel].name, color: t.emph },
-            { value: fmt(an.hod.mid[h]), label: "all monitors, middle", color: t.context },
-            { value: `${fmt(an.hod.q1[h])} to ${fmt(an.hod.q3[h])}`, label: "middle half" },
+            ...picks.map((p) => ({ value: fmt(an.hod.perMonitor[p.idx][h]), label: c.monitors[p.idx].name, color: p.color })),
+            { value: fmt(an.hod.mid[h]), label: "all monitors, median", color: t.context },
+            { value: `${fmt(an.hod.q1[h])} to ${fmt(an.hod.q3[h])}`, label: "middle 50% of readings" },
           ]);
         },
       },
@@ -222,10 +243,10 @@
         { type: "line", data: q1, stack: "band", lineStyle: { opacity: 0 }, showSymbol: false, silent: true, areaStyle: { opacity: 0 } },
         { type: "line", data: q3.map((v, h) => (v != null && q1[h] != null ? v - q1[h] : null)), stack: "band",
           lineStyle: { opacity: 0 }, showSymbol: false, silent: true, areaStyle: { color: t.context, opacity: 0.22 } },
-        { name: "All monitors", type: "line", data: an.hod.mid.map(keep), showSymbol: false, smooth: 0.2,
+        { name: "All monitors, median", type: "line", data: an.hod.mid.map(keep), showSymbol: false, smooth: 0.2,
           lineStyle: { color: t.context, width: 2 }, itemStyle: { color: t.context } },
-        { name: c.monitors[sel].name, type: "line", data: an.hod.perMonitor[sel].map(keep), smooth: 0.2, symbolSize: 6,
-          showSymbol: false, lineStyle: { color: t.emph, width: 2 }, itemStyle: { color: t.emph } },
+        ...picks.map((p) => ({ name: label(p.idx), type: "line", data: an.hod.perMonitor[p.idx].map(keep), smooth: 0.2,
+          symbolSize: 6, showSymbol: false, lineStyle: { color: p.color, width: 2 }, itemStyle: { color: p.color } })),
       ],
     };
   }
@@ -235,12 +256,14 @@
     const t = theme();
     const rows = [...an.order].reverse().filter((mi) => an.stats[mi].n);
     const floor = o.scale === "log" ? 1 : 0;
+    const picked = pickMap(o.picks);
     const data = rows.map((mi) => {
       const s = an.stats[mi];
-      const sel = mi === o.selected;
+      const p = picked.get(mi);
       return {
         value: [s.p10, s.q1, s.med, s.q3, s.p90].map((v) => Math.max(v, floor)),
-        itemStyle: { color: sel ? alpha(t.emph, 0.22) : t.wash, borderColor: sel ? t.emph : t.dot, borderWidth: sel ? 2 : 1.5, opacity: 1 },
+        // monitors not picked are gray, as in the time series, so a blue pick never blends in with them
+        itemStyle: { color: p ? alpha(p.color, 0.22) : alpha(t.context, 0.14), borderColor: p ? p.color : t.context, borderWidth: p ? 2 : 1.5, opacity: 1 },
       };
     });
     return {
@@ -251,15 +274,15 @@
         formatter: (p) => {
           const s = an.stats[rows[p.dataIndex]];
           return tipBox(t, s.m.label, [
-            { value: fmt(s.med), label: "middle reading" },
-            { value: `${fmt(s.q1)} to ${fmt(s.q3)}`, label: "middle half" },
-            { value: `${fmt(s.p10)} to ${fmt(s.p90)}`, label: "usual range" },
+            { value: fmt(s.med), label: "median" },
+            { value: `${fmt(s.q1)} to ${fmt(s.q3)}`, label: "middle 50% (25th to 75th percentile)" },
+            { value: `${fmt(s.p10)} to ${fmt(s.p90)}`, label: "usual range (10th to 90th percentile)" },
             { value: s.n.toLocaleString("en-US"), label: "15-minute values" },
           ]);
         },
       },
       xAxis: valueAxis(t, o.scale),
-      yAxis: monitorAxis(t, c, rows, o.selected, o.narrow),
+      yAxis: monitorAxis(t, c, rows, o.picks, o.narrow),
       series: [{ type: "boxplot", data, boxWidth: [6, 14] }],
       _rows: rows,
     };
@@ -269,16 +292,17 @@
   function coverage(c, an, o) {
     const t = theme();
     const rows = [...an.order].reverse();
+    const picked = pickMap(o.picks);
     const data = [];
-    rows.forEach((mi, y) => an.runs[mi].forEach(([a, b]) => data.push({ value: [y, a, b], sel: mi === o.selected })));
+    rows.forEach((mi, y) => an.runs[mi].forEach(([a, b]) => data.push({ value: [y, a, b], color: picked.has(mi) ? picked.get(mi).color : null })));
     return {
       ...base(t),
-      grid: { left: o.labelWidth || 130, right: 18, top: 8, bottom: 30 },
+      grid: { left: o.labelWidth || 130, right: 18, top: 8, bottom: 42 },
       tooltip: { ...base(t).tooltip, trigger: "item",
         formatter: (p) => tipBox(t, c.monitors[rows[p.value[0]]].label, [{ value: `${dates.time(p.value[1])} to ${dates.time(p.value[2])}`, label: "" }]) },
       xAxis: { type: "time", min: c.times[an.i0], max: c.times[an.i1] + c.step, ...axisStyle(t),
-        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, formatter: (v) => dates.day(v) } },
-      yAxis: monitorAxis(t, c, rows, o.selected, o.narrow),
+        axisLabel: { color: t.muted, fontSize: 12, hideOverlap: true, lineHeight: 16, formatter: dayLabel(c.times[an.i0]) } },
+      yAxis: monitorAxis(t, c, rows, o.picks, o.narrow),
       series: [{
         type: "custom", data, encode: { x: [1, 2], y: 0 },
         renderItem: (params, api) => {
@@ -288,7 +312,7 @@
           return {
             type: "rect",
             shape: { x: start[0], y: start[1] - h / 2, width: Math.max(2, end[0] - start[0] - 1), height: h, r: 2 },
-            style: { fill: item.sel ? t.emph : t.dot, opacity: item.sel ? 1 : 0.75 },
+            style: { fill: item.color || t.context, opacity: item.color ? 1 : 0.75 },
           };
         },
       }],
@@ -296,7 +320,7 @@
     };
   }
 
-  // ---------- calendar of daily middle values (all monitors) ----------
+  // ---------- calendar of daily medians (all monitors) ----------
   function calendar(c, an, o) {
     const t = theme();
     const data = an.days.map((d, k) => [dates.iso(d).slice(0, 10), an.dailyOverall[k]]).filter((p) => p[1] != null);
@@ -305,7 +329,7 @@
     return {
       ...base(t),
       tooltip: { ...base(t).tooltip, trigger: "item",
-        formatter: (p) => tipBox(t, p.value[0], [{ value: fmt(p.value[1]), label: "middle reading, all monitors" }]) },
+        formatter: (p) => tipBox(t, p.value[0], [{ value: fmt(p.value[1]), label: "median, all monitors" }]) },
       visualMap: { show: false, min: vals[0], max: vals[vals.length - 1], inRange: { color: t.ramp } },
       calendar: {
         range: [first, last], orient: "horizontal", top: 26, left: 34, cellSize: [o.cell || 30, o.cell || 30],

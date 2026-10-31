@@ -272,7 +272,7 @@ footer a { color: var(--ink-2); display: inline-flex; align-items: center; min-h
   <section class="climax" aria-labelledby="c4">
     <div class="wrap">
       <h2 id="c4">How was the air on your street last week?</h2>
-      <p>Pick a cohort, highlight your monitor, and compare it with the rest of the region.</p>
+      <p>Pick a cohort, find your monitor, and compare it with your neighbors and the rest of the region.</p>
       <div class="ctas">
         <a class="btn cta" href="explorer.html">Open the explorer</a>
         <a class="btn outline" href="explorer.html#neighborhoods">Find your neighborhood</a>
@@ -355,7 +355,7 @@ footer a { color: var(--ink-2); display: inline-flex; align-items: center; min-h
   }));
   $("allLink").textContent = `See all ${cohorts.length} cohorts in the explorer`;
 
-  // hero chart: hourly middle reading for every monitor in the latest cohort
+  // hero chart: hourly median for every monitor in the latest cohort
   const chart = echarts.init($("heroChart"), null, { renderer: "canvas" });
   new ResizeObserver(() => chart.resize()).observe($("heroChart"));
   let data = null;

@@ -6,8 +6,9 @@
       {
         id: "measure", title: "What the monitors measure",
         html: `<p>Each participating home has a Dylos DC1700 particle counter placed outside, usually on a porch or balcony. Once a minute it counts the particles in a small sample of air and reports two numbers, both as particles per 0.01 cubic foot.</p>
-<dl><dt>Total particles</dt><dd>Every particle larger than about 0.5 micrometers. Smoke, traffic exhaust and cooking fumes push this number up.</dd>
-<dt>Large particles</dt><dd>Only particles larger than about 2.5 micrometers, such as dust and pollen. These are part of the total.</dd></dl>`,
+<dl><dt>Total particles</dt><dd>Every particle larger than about 0.5 micrometers. Smoke, traffic exhaust and cooking fumes, for instance, push this number up.</dd>
+<dt>Large particles</dt><dd>Only particles larger than about 2.5 micrometers, such as dust and pollen. These are part of the total.</dd>
+<dt>Small particles</dt><dd>Total minus Large: particles between about 0.5 and 2.5 micrometers. Choose Small under Particles to see it.</dd></dl>`,
       },
       {
         id: "airshed", title: "One region, one airshed",
@@ -20,6 +21,18 @@
 <dl><dt>3217</dt><dd>The hash ID, a random number that stands in for the home. It stays the same each time a home takes part.</dd>
 <dt>O</dt><dd>Outdoor monitor.</dd><dt>SQHL</dt><dd>The neighborhood code, here Squirrel Hill. Homes outside Pennsylvania add the state, as in MEBA_ME.</dd></dl>
 <p>Look up any code on the <a href="#neighborhoods">Neighborhoods</a> page.</p>`,
+      },
+      {
+        id: "words", title: "Words on this site",
+        html: `<dl><dt>Median</dt><dd>The middle value: half the readings were higher and half were lower. One very high reading barely moves it, which is why the site uses it instead of the average.</dd>
+<dt>Highest hourly reading</dt><dd>Each monitor's readings are turned into one median per hour, and this is the highest of those in the chosen dates.</dd>
+<dt>Middle 50%</dt><dd>The range from the 25th to the 75th percentile: the middle half of the readings.</dd>
+<dt>Usual range</dt><dd>The 10th to the 90th percentile, the whiskers in the Distribution chart.</dd>
+<dt>Monitors reporting</dt><dd>Monitors with at least one reading in the chosen dates.</dd>
+<dt>Readings received</dt><dd>The share of expected 15-minute readings that arrived. Monitors that started late or stopped early lower it.</dd>
+<dt>Compare</dt><dd>Pick up to 8 monitors to give each its own color in every chart. The others stay gray, or hide them under Other monitors.</dd>
+<dt>Log scale</dt><dd>Each step up the axis is ten times the one before, so quiet days and big spikes fit on one chart.</dd></dl>
+<p>Every chart and number also has an <b>i</b> button that explains it.</p>`,
       },
       {
         id: "process", title: "How the data is prepared",
@@ -40,7 +53,7 @@
       },
       {
         id: "dictionary", title: "Data dictionary",
-        html: `<p>Each downloadable file has one row per 15 minutes and one column per monitor. Total particle files are called <b>small_N.csv</b> and large particle files <b>large_N.csv</b>, after the monitor's two channels.</p>
+        html: `<p>Each downloadable file has one row per 15 minutes and one column per monitor. Total particle files are called <b>small_N.csv</b> and large particle files <b>large_N.csv</b>, after the monitor's two channels. Small particles (total minus large) download as <b>dylos_small_N.csv</b>.</p>
 <div class="doc-table"><table><thead><tr><th>Column</th><th>Meaning</th><th>Example</th></tr></thead><tbody>
 <tr><td>Date/Time</td><td>Start of the 15-minute window, on the monitor's local clock</td><td>2026-10-05 14:15:00</td></tr>
 <tr><td>One per monitor</td><td>Average count for the window, particles per 0.01 cubic foot. Empty means no reading.</td><td>3217_O_SQHL = 412.6</td></tr>
@@ -54,21 +67,22 @@
           ["Pick a cohort", "Choose it from the cohort menu at the top of the page."],
           ["Look across a row", "Each row is one monitor. Darker stretches mean more particles, often in the evening and early morning."],
           ["Look down a column", "When most rows darken together, the whole region had dirtier air, usually because of the weather."],
-          ["Point at a cell", "See the exact hour and that monitor's middle reading."],
+          ["Point at a cell", "See the exact hour and that monitor's median for it."],
         ],
       },
       {
         id: "compare", title: "Compare your monitor", audience: "Participants",
         steps: [
           ["Find your hash ID", "ROCIS sends it to you when your cohort begins."],
-          ["Highlight it", "Choose it in the monitor menu or click its row. It turns amber in every chart and the others turn gray."],
-          ["Check the comparison chart", "If your box sits to the right of most others, your air usually had more particles."],
+          ["Pick it", "Open Compare and tick it, or click its row in the Monitors list. It gets its own color in every chart and the others turn gray."],
+          ["Add neighbors", "Tick up to 8 monitors to compare them side by side. Choose Hide under Other monitors to see only those."],
+          ["Check the Distribution chart", "If your box sits to the right of most others, your air usually had more particles."],
         ],
       },
       {
         id: "spreadsheet", title: "Use the data in a spreadsheet", audience: "Researchers",
         steps: [
-          ["Download the file", "Choose total or large particles on the download panel."],
+          ["Download the file", "Choose Total, Large or Small under Download CSV."],
           ["Open it in Excel or Google Sheets", "The first column is the time; every other column is one monitor."],
           ["Leave empty cells empty", "An empty cell means no reading. Treating it as zero makes averages look cleaner than the air was."],
         ],

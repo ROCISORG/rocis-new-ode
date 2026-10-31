@@ -3,6 +3,7 @@
   init-config   one-time: copy cohort dates and neighborhood codes from the old site
   run           build every cohort, run the checks, write the website data and reports
   run --only N  rebuild a single cohort and refresh the cohort list
+  summary       add rows for new cohorts' downloads (every monitor) to the summary CSVs
 """
 import argparse
 import html
@@ -11,7 +12,7 @@ import re
 import sys
 from datetime import datetime
 
-from . import outputs
+from . import outputs, summary
 from .process import build_from_raw
 from .published import import_cohort, parse_column
 from .registry import PIPELINE_DIR, Registry, load_cohorts, load_neighborhoods, load_settings, write_rows
@@ -137,11 +138,14 @@ def main(argv=None) -> int:
     sub.add_parser("init-config")
     run_parser = sub.add_parser("run")
     run_parser.add_argument("--only", type=int, help="rebuild just this cohort")
+    sub.add_parser("summary")
     args = parser.parse_args(argv)
     settings = load_settings()
     if args.command == "init-config":
         init_config(settings)
         return 0
+    if args.command == "summary":
+        return summary.run(settings)
     return run(settings, args.only)
 
 

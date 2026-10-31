@@ -1,18 +1,35 @@
-/* State and wiring shared by every design: which cohort, measure, monitor, time range
+/* State and wiring shared by every design: which cohort, measure, monitors, time range
    and scale are chosen, loading cohorts, and keeping all charts in step. */
 (function () {
   const ROCIS = (window.ROCIS = window.ROCIS || {});
   const U = ROCIS.util;
+  const MAX_PICKS = 8; // one color each from the --pick palette; more would need repeated hues
 
   ROCIS.createApp = function createApp(cfg) {
-    const state = { cohort: null, measure: "total", monitor: 0, range: "all", scale: "value", region: "all" };
+    const state = {
+      cohort: null, measure: "total", range: "all", scale: "value", region: "all", others: "show",
+      picked: [], // monitor idx in the order they were added
+      custom: { from: null, to: null }, // day starts (ms, monitor clock) when range is "custom"
+    };
+    // a picked monitor keeps its color slot until it is removed, so adding one never repaints the others
+    const slots = new Map(); // hashId -> slot
     const charts = {};
     // full: the cohort as loaded; c: what is shown (only Pennsylvania monitors when region is "pa")
     let full = null, c = null, an = null, renderToken = 0, hidden = 0;
     const app = {
       state, get cohort() { return c; }, get analysis() { return an; }, get hidden() { return hidden; },
-      charts, select, setCohort, show, rerender: render,
+      charts, select, toggle, reset, setCohort, setCustom, show, colorOf, rerender: render, MAX_PICKS,
     };
+
+    function palette() {
+      return getComputedStyle(document.documentElement).getPropertyValue("--pick").split(",").map((s) => s.trim()).filter(Boolean);
+    }
+    function colorOf(idx) {
+      const m = c && c.monitors[idx];
+      const slot = m ? slots.get(m.hashId) : undefined;
+      return slot == null ? null : palette()[slot];
+    }
+    const picks = () => state.picked.map((idx) => ({ idx, color: colorOf(idx) }));
 
     function chartFor(key) {
       const el = cfg.els[key];
@@ -24,11 +41,11 @@
           if (!rows) return;
           if (p.componentType === "yAxis" && p.targetType === "axisLabel") {
             const m = app.cohort && app.cohort.monitors.find((x) => x.label === p.value);
-            if (m) select(m.idx);
+            if (m) toggle(m.idx);
           } else if (p.componentType === "series" && p.data) {
             const y = Array.isArray(p.data) ? p.data[1] : p.data.value ? (key === "coverage" ? p.data.value[0] : null) : null;
-            if (key === "boxplot") select(rows[p.dataIndex]);
-            else if (y != null) select(rows[y]);
+            if (key === "boxplot") toggle(rows[p.dataIndex]);
+            else if (y != null) toggle(rows[y]);
           }
         };
         charts[key].on("click", pick);
@@ -47,10 +64,10 @@
 
     function render() {
       if (!c) return;
-      const [i0, i1] = U.windowIdx(c, state.range);
+      const [i0, i1] = U.windowIdx(c, state.range, state.custom);
       an = U.analyze(c, state.measure, i0, i1);
       cfg.beforeRender && cfg.beforeRender(app);
-      const opts = { ...state, selected: state.monitor, unit: "", unitShort: "per 0.01 ft³" };
+      const opts = { ...state, picks: picks(), unit: "", unitShort: "per 0.01 ft³" };
       const B = ROCIS.charts;
       const base = cfg.chartOptions || {};
       const over = {};
@@ -68,10 +85,54 @@
       cfg.onRender && cfg.onRender(app);
     }
 
+    function freeSlot() {
+      const used = new Set(state.picked.map((i) => slots.get(c.monitors[i].hashId)));
+      for (let s = 0; s < MAX_PICKS; s++) if (!used.has(s)) return s;
+      return null;
+    }
+    function add(idx) {
+      if (state.picked.includes(idx)) return true;
+      if (state.picked.length >= MAX_PICKS) return false;
+      slots.set(c.monitors[idx].hashId, freeSlot());
+      state.picked.push(idx);
+      return true;
+    }
+
+    // make one monitor the only one picked
     function select(idx) {
-      if (idx == null || idx === state.monitor) return;
-      state.monitor = idx;
-      if (cfg.controls.monitor) cfg.controls.monitor.value = String(idx);
+      if (idx == null || !c) return;
+      state.picked = [];
+      slots.clear();
+      add(idx);
+      render();
+    }
+
+    // add a monitor to the comparison, or take it out; at least one stays picked
+    function toggle(idx) {
+      if (idx == null || !c) return;
+      const at = state.picked.indexOf(idx);
+      if (at >= 0) {
+        if (state.picked.length === 1) return;
+        state.picked.splice(at, 1);
+        slots.delete(c.monitors[idx].hashId);
+      } else if (!add(idx)) {
+        cfg.onLimit && cfg.onLimit(MAX_PICKS);
+        return;
+      }
+      render();
+    }
+
+    function reset() {
+      if (!c) return;
+      const [i0, i1] = U.windowIdx(c, state.range, state.custom);
+      const stats = U.analyze(c, state.measure, i0, i1).stats;
+      select(stats.reduce((best, s) => (s.n > best.n ? s : best), stats[0]).m.idx);
+    }
+
+    function setCustom(from, to) {
+      state.range = "custom";
+      state.custom = { from, to };
+      (cfg.controls.range || []).forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.range === "custom")));
       render();
     }
 
@@ -86,15 +147,29 @@
     }
 
     function applyView(prefer) {
-      const previousHash = c && c.monitors[state.monitor] ? c.monitors[state.monitor].hashId : null;
+      const keepHashes = c ? state.picked.map((i) => c.monitors[i] && c.monitors[i].hashId).filter(Boolean) : [];
+      const sameCohort = c && full && c.cohort === full.cohort;
       c = viewOf(full);
       hidden = full.monitors.length - c.monitors.length;
-      const [i0, i1] = U.windowIdx(c, state.range);
-      const first = U.analyze(c, state.measure, i0, i1);
-      const wanted = (prefer && c.monitors.find(prefer)) || (previousHash && c.monitors.find((m) => m.hashId === previousHash));
-      const mostData = first.stats.reduce((best, s) => (s.n > best.n ? s : best), first.stats[0]);
-      state.monitor = wanted ? wanted.idx : mostData.m.idx;
-      fillMonitorSelect();
+      if (!sameCohort) state.custom = { from: null, to: null };
+      if (state.range === "custom" && !sameCohort) {
+        state.range = "all";
+        (cfg.controls.range || []).forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.range === "all")));
+      }
+      const wanted = prefer && c.monitors.find(prefer);
+      // picks carry over when they are in the new view (another cohort, or switching PA only)
+      const kept = wanted ? [] : keepHashes.map((h) => c.monitors.find((m) => m.hashId === h)).filter(Boolean);
+      const oldSlots = new Map(slots);
+      state.picked = [];
+      slots.clear();
+      kept.forEach((m) => { state.picked.push(m.idx); slots.set(m.hashId, oldSlots.get(m.hashId)); });
+      if (wanted) add(wanted.idx);
+      if (!state.picked.length) {
+        const [i0, i1] = U.windowIdx(c, state.range, state.custom);
+        const stats = U.analyze(c, state.measure, i0, i1).stats;
+        add(stats.reduce((best, s) => (s.n > best.n ? s : best), stats[0]).m.idx);
+      }
+      cfg.onCohort && cfg.onCohort(app);
       render();
     }
 
@@ -103,7 +178,7 @@
       (cfg.controls.region || []).forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.region === region)));
     }
 
-    // open cohort n with the monitor for a neighborhood code highlighted
+    // open cohort n with the monitor for a neighborhood code picked
     function show(n, code) {
       const base = (m) => m.code.split("_")[0] === code;
       if (cfg.controls.cohort) cfg.controls.cohort.value = String(n);
@@ -135,24 +210,12 @@
       applyView(prefer);
     }
 
-    function fillMonitorSelect() {
-      const sel = cfg.controls.monitor;
-      if (!sel) return;
-      sel.replaceChildren();
-      [...c.monitors].sort((a, b) => a.name.localeCompare(b.name)).forEach((m) => {
-        const o = document.createElement("option");
-        o.value = String(m.idx);
-        o.textContent = m.label;
-        sel.append(o);
-      });
-      sel.value = String(state.monitor);
-    }
-
-    function wireButtons(nodes, key) {
+    function wireButtons(nodes, key, after) {
       if (!nodes) return;
       nodes.forEach((b) => b.addEventListener("click", () => {
         state[key] = b.dataset[key];
         nodes.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+        after && after(b.dataset[key]);
         render();
       }));
     }
@@ -169,10 +232,10 @@
       });
       sel.addEventListener("change", () => setCohort(+sel.value));
     }
-    if (cfg.controls.monitor) cfg.controls.monitor.addEventListener("change", () => select(+cfg.controls.monitor.value));
     wireButtons(cfg.controls.measure, "measure");
-    wireButtons(cfg.controls.range, "range");
+    wireButtons(cfg.controls.range, "range", cfg.onRange);
     wireButtons(cfg.controls.scale, "scale");
+    wireButtons(cfg.controls.others, "others");
     (cfg.controls.region || []).forEach((b) => b.addEventListener("click", () => {
       setRegion(b.dataset.region);
       if (full) applyView();
